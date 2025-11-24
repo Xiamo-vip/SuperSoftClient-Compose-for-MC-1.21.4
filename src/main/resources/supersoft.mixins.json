@@ -12,6 +12,7 @@
     "requireAnnotations": true
   },
   "client": [
+    "MixinKey",
     "MixinMouse"
   ]
 }

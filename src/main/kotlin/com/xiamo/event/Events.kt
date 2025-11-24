@@ -19,5 +19,8 @@ class MouseReleasedEvent(val mouseX : Int,val mouseY : Int): Event(){}
 
 
 
+class KeyBoardEvent(val key : Int,val action : Int): Event(){}
+
+
 
 

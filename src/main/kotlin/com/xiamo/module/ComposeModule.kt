@@ -30,7 +30,8 @@ import org.jetbrains.skia.SurfaceColorFormat
 import org.jetbrains.skia.SurfaceOrigin
 import org.lwjgl.opengl.GL33C
 
-open class ComposeModule(name : String, description : String) : Module(name,description) {
+@OptIn(InternalComposeUiApi::class)
+open class ComposeModule(name : String, description : String) : Module(name,description, Category.Render) {
 
     var skiaContext : DirectContext? = null
     var renderTarget : BackendRenderTarget? = null
@@ -40,10 +41,24 @@ open class ComposeModule(name : String, description : String) : Module(name,desc
 
     var surface: Surface? = null
     @OptIn(InternalComposeUiApi::class)
-    val composeScene : ComposeScene = CanvasLayersComposeScene(
-        density = Density(1f),
-        invalidate = {},
-    )
+    var composeScene : ComposeScene? = null
+
+
+
+    private fun initCompose(width : Int,height : Int){
+        composeScene =  CanvasLayersComposeScene(
+            density = Density(1f),
+            invalidate = {},
+        ).apply {
+            setContent {
+                renderCompose()
+            }
+        }
+
+        composeScene?.size = IntSize(width,height)
+    }
+
+    @OptIn(InternalComposeUiApi::class)
     private fun buildCompose(){
         val mc = MinecraftClient.getInstance()
         renderTarget = BackendRenderTarget.makeGL(
@@ -65,19 +80,24 @@ open class ComposeModule(name : String, description : String) : Module(name,desc
             }
         }
 
+        composeScene?.let { it.size = IntSize(mc.window.framebufferWidth, mc.window.framebufferHeight) }
+
     }
 
     @OptIn(InternalComposeUiApi::class, ExperimentalComposeUiApi::class)
     override fun onRender(drawContext: DrawContext) {
         val mc = MinecraftClient.getInstance()
+
+        if (composeScene == null) initCompose(mc.window.framebufferWidth,mc.window.framebufferHeight)
+
         if (lastScaleFactor != currentScale){
-            composeScene.density = Density(currentScale)
+            composeScene?.density = Density(currentScale)
             lastScaleFactor = currentScale
         }
         drawContext.matrices.push()
         if (skiaContext == null) skiaContext = DirectContext.makeGL()
+        composeScene?.size = IntSize(mc.window.width, mc.window.height)
         currentScale = mc.window.scaleFactor.toFloat()
-        composeScene.setContent { renderCompose() }
         GlStateUtil.save()
         glStorePixel()
         skiaContext?.resetAll()
@@ -111,8 +131,7 @@ open class ComposeModule(name : String, description : String) : Module(name,desc
         if (surface?.width != mc.window.framebufferWidth || surface?.height != mc.window.framebufferHeight) buildCompose()
 
         RenderSystem.enableBlend()
-        composeScene.size = IntSize(mc.window.framebufferWidth, mc.window.framebufferHeight)
-        surface?.let { composeScene.render(it.canvas.asComposeCanvas(), System.nanoTime()) }
+        surface?.let { composeScene?.render(it.canvas.asComposeCanvas(), System.nanoTime()) }
         surface?.flush()
         GlStateUtil.restore()
         RenderSystem.disableBlend()
