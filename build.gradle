@@ -31,6 +31,8 @@ repositories {
 	}
 	maven { url 'https://jitpack.io' }
 
+
+
 }
 
 
@@ -57,6 +59,8 @@ dependencies {
 	shade(compose.runtime)
 	shade("org.jetbrains.compose.ui:ui-desktop")
     shade("javazoom:jlayer:1.0.1")
+
+    shade("com.github.goxr3plus:java-stream-player:10.0.2")
 
 
 }
