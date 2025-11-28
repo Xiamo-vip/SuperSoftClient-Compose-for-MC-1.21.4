@@ -59,8 +59,10 @@ dependencies {
 	shade(compose.runtime)
 	shade("org.jetbrains.compose.ui:ui-desktop")
     shade("javazoom:jlayer:1.0.1")
-
+    shade("com.squareup.okhttp3:okhttp:5.3.0")
     shade("com.github.goxr3plus:java-stream-player:10.0.2")
+    shade("io.coil-kt.coil3:coil-compose:3.3.0")
+    shade("io.coil-kt.coil3:coil-network-okhttp:3.3.0")
 
 
 }

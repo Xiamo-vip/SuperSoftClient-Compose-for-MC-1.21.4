@@ -7,7 +7,8 @@ import net.fabricmc.api.ModInitializer
 import org.slf4j.LoggerFactory
 
 object SuperSoft : ModInitializer {
-    private val logger = LoggerFactory.getLogger("supersoft")
+    val logger = LoggerFactory.getLogger("SuperSoft Client")
+    val dataPath = "/SuperSoft"
 
 	override fun onInitialize() {
 		// This code runs as soon as Minecraft is in a mod-load-ready state.

@@ -1,5 +1,6 @@
 package com.xiamo.event
 
+import com.xiamo.SuperSoft
 import com.xiamo.module.ModuleManager
 import org.lwjgl.glfw.GLFW
 
@@ -9,6 +10,9 @@ object  EvenManager {
 
     init {
         eventBus.subscribe()
+
+
+        SuperSoft.logger.info("EventBus Loaded")
     }
 
 

@@ -1,5 +1,7 @@
 package com.xiamo.utils.misc
 
+import androidx.compose.runtime.mutableStateOf
+import com.goxr3plus.streamplayer.enums.Status
 import com.goxr3plus.streamplayer.stream.StreamPlayer
 import com.goxr3plus.streamplayer.stream.StreamPlayerEvent
 import com.goxr3plus.streamplayer.stream.StreamPlayerListener
@@ -17,46 +19,60 @@ import javax.swing.JLayer
 import javax.swing.JLayeredPane
 
 object MediaPlayer : StreamPlayerListener {
-    var player : StreamPlayer = StreamPlayer()
+    val player : StreamPlayer = StreamPlayer()
 
-    fun playSound(file : File){
+    var isPlaying = mutableStateOf(false)
+    var song = mutableStateOf<Song?>(null)
+    var songFile = mutableStateOf<File?>(null)
+    var tick =  mutableStateOf(0)
+
+    fun playSound(file : File,song: Song){
+
         Thread{
-            player.open(file)
+            songFile.value = file
+            player.stop()
+            player.open(songFile.value)
+            this.song.value = song
             player.addStreamPlayerListener(this)
+            isPlaying.value = true
             player.play()
         }.start()
     }
 
     fun play(){
         Thread{
-            player.play()
+            player.resume()
+            isPlaying.value = true
         }.start()
     }
 
     fun pause(){
         Thread{
             player.pause()
-        }
+            isPlaying.value = false
+        }.start()
     }
 
+    fun toggle() {
+        if(isPlaying.value) pause() else play()
+    }
 
+    override fun opened(dataSource: Any?, properties: Map<String?, Any?>?) {
 
-
-    override fun opened(p0: Any?, p1: Map<String?, Any?>?) {
-        TODO("Not yet implemented")
     }
 
     override fun progress(
-        p0: Int,
-        p1: Long,
-        p2: ByteArray?,
-        p3: Map<String?, Any?>?
+        nEncodedBytes: Int,
+        microsecondPosition: Long,
+        pcmData: ByteArray?,
+        properties: Map<String?, Any?>?
     ) {
-        TODO("Not yet implemented")
+        tick.value = microsecondPosition.toInt()
     }
 
-    override fun statusUpdated(p0: StreamPlayerEvent?) {
-        TODO("Not yet implemented")
+    override fun statusUpdated(event: StreamPlayerEvent?) {
+        if (event?.playerStatus == Status.STOPPED){isPlaying.value = false}
+
     }
 
 

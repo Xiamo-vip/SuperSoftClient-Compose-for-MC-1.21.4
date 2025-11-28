@@ -322,6 +322,28 @@ open class ComposeScreen(val text: Text) : Screen(text) {
         return super.keyReleased(keyCode, scanCode, modifiers)
     }
 
+    override fun mouseScrolled(
+        mouseX: Double,
+        mouseY: Double,
+        horizontalAmount: Double,
+        verticalAmount: Double
+    ): Boolean {
+        val event = AWTUtils.MouseWheelEvent(
+            (mouseX * currentScale).toInt(),
+            (mouseY * currentScale).toInt(),
+            mouseY,
+            AWTUtils.getAwtMods(MinecraftClient.getInstance().window.handle),
+            MouseEvent.MOUSE_WHEEL
+        )
+        composeScene?.sendPointerEvent(
+            position =toComposeOffset(mouseX, mouseY),
+            eventType = PointerEventType.Scroll,
+            scrollDelta = toComposeOffset(horizontalAmount, -verticalAmount),
+            nativeEvent = event
+        )
+        return super.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount)
+    }
+
     @OptIn(InternalComposeUiApi::class)
     override fun close() {
         allowExit = true

@@ -1,5 +1,6 @@
 package com.xiamo.module
 
+import com.xiamo.SuperSoft
 import com.xiamo.gui.musicPlayer.MusicPlayerScreen
 import com.xiamo.module.modules.misc.MusicPlayer
 import com.xiamo.module.modules.render.ClickGui
@@ -23,6 +24,8 @@ object ModuleManager {
 
 
 
+
+        SuperSoft.logger.info("Module Loaded")
     }
 
 
