@@ -103,7 +103,6 @@ open class ComposeScreen(val text: Text) : Screen(text) {
     }
 
     override fun removed() {
-        if (!allowExit) ModuleManager.modules.find { it.name == this.text.string }?.disable()
         super.removed()
     }
 

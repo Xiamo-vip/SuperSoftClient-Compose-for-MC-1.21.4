@@ -36,7 +36,7 @@ open class ComposeModule(name : String, description : String) : Module(name,desc
     var skiaContext : DirectContext? = null
     var renderTarget : BackendRenderTarget? = null
 
-    private var currentScale = 1f
+    private var currentScale: Float = 1f
     private var lastScaleFactor: Float = -1f
 
     var surface: Surface? = null
@@ -45,42 +45,47 @@ open class ComposeModule(name : String, description : String) : Module(name,desc
 
 
 
-    private fun initCompose(width : Int,height : Int){
-        composeScene =  CanvasLayersComposeScene(
-            density = Density(1f),
-            invalidate = {},
-        ).apply {
-            setContent {
-                renderCompose()
-            }
-        }
-
-        composeScene?.size = IntSize(width,height)
+    private fun closeSkiaResources() {
+        skiaContext?.close()
+        renderTarget?.close()
+        surface?.close()
+        skiaContext = null
+        renderTarget = null
+        surface = null
     }
 
-    @OptIn(InternalComposeUiApi::class)
-    private fun buildCompose(){
-        val mc = MinecraftClient.getInstance()
-        renderTarget = BackendRenderTarget.makeGL(
-            mc.window.framebufferWidth,
-            mc.window.framebufferHeight,
-            0,8,
-            mc.framebuffer.fbo,
-            FramebufferFormat.Companion.GR_GL_RGBA8
-        )
-        surface = skiaContext?.let {
-            renderTarget?.let { rt ->
-                Surface.makeFromBackendRenderTarget(
-                    it,
-                    rt,
-                    SurfaceOrigin.BOTTOM_LEFT,
-                    SurfaceColorFormat.BGRA_8888,
-                    ColorSpace.Companion.sRGB
-                )
+    private fun initCompose(width: Int, height: Int){
+        if (composeScene == null) {
+            composeScene = CanvasLayersComposeScene(
+                density = Density(MinecraftClient.getInstance().window.scaleFactor.toFloat()
+                ), invalidate = {}).apply {
+                setContent { renderCompose() }
             }
+        } else {
+            composeScene?.density = Density(MinecraftClient.getInstance().window.scaleFactor.toFloat())
+        }
+        composeScene?.size = IntSize(width, height)
+    }
+
+    private fun buildCompose(){
+        val frameWidth = MinecraftClient.getInstance().window.framebufferWidth
+        val frameHeight = MinecraftClient.getInstance().window.framebufferHeight
+        val mc = MinecraftClient.getInstance()
+        if (skiaContext != null && surface != null &&
+            surface!!.width == frameWidth && surface!!.height == frameHeight) {
+            return
         }
 
-        composeScene?.let { it.size = IntSize(mc.window.framebufferWidth, mc.window.framebufferHeight) }
+        closeSkiaResources()
+
+        skiaContext = DirectContext.makeGL()
+        renderTarget = BackendRenderTarget.makeGL(frameWidth,frameHeight,0,8,mc.framebuffer.fbo,
+            FramebufferFormat.GR_GL_RGBA8)
+
+
+        surface = Surface.makeFromBackendRenderTarget(
+            skiaContext!!, renderTarget!!, SurfaceOrigin.BOTTOM_LEFT,
+            SurfaceColorFormat.BGRA_8888, ColorSpace.sRGB)
 
     }
 
@@ -88,66 +93,28 @@ open class ComposeModule(name : String, description : String) : Module(name,desc
     override fun onRender(drawContext: DrawContext) {
         val mc = MinecraftClient.getInstance()
 
-        if (composeScene == null) initCompose(mc.window.framebufferWidth,mc.window.framebufferHeight)
+        if (composeScene == null) initCompose(mc.window.width,mc.window.height)
 
-        if (lastScaleFactor != currentScale){
-            composeScene?.density = Density(currentScale)
-            lastScaleFactor = currentScale
+        if (lastScaleFactor != mc.window.scaleFactor.toFloat()){
+            closeSkiaResources()
+            initCompose(mc.window.width,mc.window.height)
+            lastScaleFactor = mc.window.scaleFactor.toFloat()
         }
-        drawContext.matrices.push()
-        if (skiaContext == null) skiaContext = DirectContext.makeGL()
-        composeScene?.size = IntSize(mc.window.width, mc.window.height)
+
+        if (composeScene?.size?.width != mc.window.width || composeScene?.size?.height != mc.window.height) {
+            closeSkiaResources()
+            initCompose(mc.window.width,mc.window.height)
+        }
         currentScale = mc.window.scaleFactor.toFloat()
+        buildCompose()
         GlStateUtil.save()
         glStorePixel()
         skiaContext?.resetAll()
-
-       if (renderTarget == null){
-           renderTarget = BackendRenderTarget.makeGL(
-               mc.window.framebufferWidth,
-               mc.window.framebufferHeight,
-               0,8,
-               mc.framebuffer.fbo,
-               FramebufferFormat.Companion.GR_GL_RGBA8
-           )
-       }
-
-
-
-        if (surface ==null){
-            surface = skiaContext?.let {
-                renderTarget?.let { rt ->
-                    Surface.makeFromBackendRenderTarget(
-                        it,
-                        rt,
-                        SurfaceOrigin.BOTTOM_LEFT,
-                        SurfaceColorFormat.BGRA_8888,
-                        ColorSpace.Companion.sRGB
-                    )
-                }
-            }
-        }
-
-        if (surface?.width != mc.window.framebufferWidth || surface?.height != mc.window.framebufferHeight) buildCompose()
-
         RenderSystem.enableBlend()
         surface?.let { composeScene?.render(it.canvas.asComposeCanvas(), System.nanoTime()) }
         surface?.flush()
         GlStateUtil.restore()
         RenderSystem.disableBlend()
-        drawContext.matrices.pop()
-
-//        val pointer = ComposeScenePointer(
-//            id = PointerId(0),
-//            position = toComposeOffset(MousePosition.xPos.toDouble(), MousePosition.yPos.toDouble()),
-//            pressed = false,
-//            type = PointerType.Mouse
-//        )
-//
-//        composeScene.sendPointerEvent(
-//            PointerEventType.Move,
-//            listOf(pointer)
-//        )
 
 
     }

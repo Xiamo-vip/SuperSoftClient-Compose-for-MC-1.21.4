@@ -149,12 +149,9 @@ class ClickGuiWindow(val x: Int, val y: Int, val category: Category, val width: 
         val physX = mouseX * scale
         val physY = mouseY * scale
 
-        // Dp 值的物理像素宽度
         val scaledWidth = width * scale
-        // 标题栏的物理像素高度
         val scaledHeight = height * scale
 
-        // 检查点击是否发生在窗口标题栏的物理边界内
         if (physX >= windowX && physX <= windowX + scaledWidth &&
             physY >= windowY && physY <= windowY + scaledHeight) {
 

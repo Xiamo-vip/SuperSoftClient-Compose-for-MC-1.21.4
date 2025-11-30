@@ -4,6 +4,7 @@ import com.xiamo.SuperSoft
 import com.xiamo.gui.musicPlayer.MusicPlayerScreen
 import com.xiamo.module.modules.misc.MusicPlayer
 import com.xiamo.module.modules.render.ClickGui
+import com.xiamo.module.modules.render.DynamicIsland
 import com.xiamo.module.modules.render.Hud
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
@@ -20,6 +21,7 @@ object ModuleManager {
         modules.add(Hud)
         modules.add(ClickGui)
         modules.add(MusicPlayer)
+        modules.add(DynamicIsland)
 
 
 

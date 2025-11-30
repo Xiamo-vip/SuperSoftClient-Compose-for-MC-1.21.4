@@ -53,6 +53,13 @@ object  EvenManager {
 
     }
 
+    @EventTarget
+    fun tickEvent(tickEvent: TickEvent){
+        ModuleManager.modules.filter { it.enabled }.forEach {
+            it.onTick()
+        }
+    }
+
 
 
 

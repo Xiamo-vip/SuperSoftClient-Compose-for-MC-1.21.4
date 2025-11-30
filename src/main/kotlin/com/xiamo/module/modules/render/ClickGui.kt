@@ -22,16 +22,10 @@ object ClickGui : Module("ClickGui","ClickGui", Category.Render){
 
 
     override fun disable() {
+        println(6)
         instance?.isVisible = false
         super.disable()
     }
-
-
-
-    override fun toggle() {
-        super.toggle()
-    }
-
     override fun enable() {
         val currentScreen = MinecraftClient.getInstance().currentScreen
         if (currentScreen is ComposeScreen){
