@@ -6,6 +6,7 @@ import com.xiamo.module.modules.misc.MusicPlayer
 import com.xiamo.module.modules.render.ClickGui
 import com.xiamo.module.modules.render.DynamicIsland
 import com.xiamo.module.modules.render.Hud
+import com.xiamo.module.modules.render.Lyric
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import net.minecraft.client.MinecraftClient
@@ -22,6 +23,7 @@ object ModuleManager {
         modules.add(ClickGui)
         modules.add(MusicPlayer)
         modules.add(DynamicIsland)
+        modules.add(Lyric)
 
 
 

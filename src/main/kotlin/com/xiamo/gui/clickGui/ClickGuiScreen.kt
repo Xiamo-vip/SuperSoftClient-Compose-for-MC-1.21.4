@@ -81,11 +81,10 @@ class ClickGuiScreen(val parentScreen : Screen? = null) : ComposeScreen(Text.of(
     val categories = CopyOnWriteArrayList<ClickGuiWindow>()
 
 
-
-
-
-
-
+    override fun removed() {
+        ModuleManager.modules.find { it.name == "ClickGui" }?.enabled = false
+        super.removed()
+    }
     @Composable
     override fun renderCompose() {
         val density = LocalDensity.current

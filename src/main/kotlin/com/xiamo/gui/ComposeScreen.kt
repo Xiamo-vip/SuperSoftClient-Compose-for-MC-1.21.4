@@ -26,6 +26,7 @@ import com.xiamo.utils.GlStateUtil
 import com.xiamo.utils.glfwToAwtKeyCode
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.DrawContext
+import net.minecraft.client.gui.Element
 import net.minecraft.client.gui.screen.Screen
 import net.minecraft.text.Text
 import org.jetbrains.skia.BackendRenderTarget
@@ -341,6 +342,10 @@ open class ComposeScreen(val text: Text) : Screen(text) {
             nativeEvent = event
         )
         return super.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount)
+    }
+
+    override fun remove(child: Element?) {
+        super.remove(child)
     }
 
     @OptIn(InternalComposeUiApi::class)

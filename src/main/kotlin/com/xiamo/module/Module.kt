@@ -43,15 +43,15 @@ open class Module(val name : String,val description : String,val category: Categ
     open fun onMouseReleased(mouseX: Int, mouseY : Int){}
 
     open fun enable(){
-        NotificationManager.notifies.add(Notify(this.name,"Toggled",3000L,{
+        NotificationManager.notifies.add(Notify(this.name,"Toggled",2000L,{
             Row(horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
-                Icon(SuperSoft.javaClass.getResourceAsStream("/assets/supersoft/ui/icon/enable.png").readAllBytes().decodeToImageBitmap(), contentDescription = "Disable", tint = Color.Green,modifier = Modifier.padding(end = 10.dp).size(10.dp))
+                Icon(SuperSoft.javaClass.getResourceAsStream("/assets/supersoft/ui/icon/enable.png").readAllBytes().decodeToImageBitmap(), contentDescription = "Disable", tint = Color.Green,modifier = Modifier.padding(end = 10.dp).size(12.dp))
                 Text(buildAnnotatedString {
                     withStyle(style = SpanStyle(color = Color.White, fontSize = 10.sp)){
                         append(name)
                     }
                     withStyle(style = SpanStyle(color = Color.Green, fontSize = 10.sp)){
-                        append(" Enabled")
+                        append("  Enabled")
                     }
                 })
             }
@@ -60,15 +60,15 @@ open class Module(val name : String,val description : String,val category: Categ
     }
 
     open fun disable(){
-        NotificationManager.notifies.add(Notify(this.name,"Toggled",3000L,{
+        NotificationManager.notifies.add(Notify(this.name,"Toggled",2000L,{
             Row(horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
-                Icon(SuperSoft.javaClass.getResourceAsStream("/assets/supersoft/ui/icon/disable.png").readAllBytes().decodeToImageBitmap(), contentDescription = "Disable", tint = Color.Red,modifier = Modifier.padding(end = 10.dp).size(10.dp))
+                Icon(SuperSoft.javaClass.getResourceAsStream("/assets/supersoft/ui/icon/disable.png").readAllBytes().decodeToImageBitmap(), contentDescription = "Disable", tint = Color.Red,modifier = Modifier.padding(end = 10.dp).size(12.dp))
                 Text(buildAnnotatedString {
                     withStyle(style = SpanStyle(color = Color.White, fontSize = 10.sp)){
                         append(name)
                     }
                     withStyle(style = SpanStyle(color = Color.Red, fontSize = 10.sp)){
-                        append(" Disabled")
+                        append("  Disabled")
                     }
                 })
             }

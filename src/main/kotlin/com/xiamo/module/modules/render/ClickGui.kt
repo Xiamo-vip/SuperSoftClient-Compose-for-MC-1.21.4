@@ -22,7 +22,6 @@ object ClickGui : Module("ClickGui","ClickGui", Category.Render){
 
 
     override fun disable() {
-        println(6)
         instance?.isVisible = false
         super.disable()
     }

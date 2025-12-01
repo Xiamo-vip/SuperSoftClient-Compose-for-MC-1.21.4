@@ -1,5 +1,6 @@
 package com.xiamo.utils.misc
 
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import com.goxr3plus.streamplayer.enums.Status
 import com.goxr3plus.streamplayer.stream.StreamPlayer
@@ -25,6 +26,7 @@ object MediaPlayer : StreamPlayerListener {
     var song = mutableStateOf<Song?>(null)
     var songFile = mutableStateOf<File?>(null)
     var tick =  mutableStateOf(0)
+    var lyric = mutableStateListOf<LyricLine>()
 
     fun playSound(file : File,song: Song){
 
@@ -59,6 +61,7 @@ object MediaPlayer : StreamPlayerListener {
 
     override fun opened(dataSource: Any?, properties: Map<String?, Any?>?) {
 
+
     }
 
     override fun progress(
@@ -67,13 +70,15 @@ object MediaPlayer : StreamPlayerListener {
         pcmData: ByteArray?,
         properties: Map<String?, Any?>?
     ) {
-        tick.value = microsecondPosition.toInt()
+        tick.value = (microsecondPosition / 1000).toInt()
     }
 
     override fun statusUpdated(event: StreamPlayerEvent?) {
         if (event?.playerStatus == Status.STOPPED){isPlaying.value = false}
 
     }
+
+
 
 
 }

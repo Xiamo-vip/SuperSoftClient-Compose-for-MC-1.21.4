@@ -81,7 +81,6 @@ object Hud : ComposeModule("Hud","界面") {
                                color = Color.White,
                                modifier = Modifier
                                    .background(Color(255f, 255f, 255f, 0.6f), RoundedCornerShape(2.dp))
-                                   .shadow(50.dp, clip = true)
                                    .padding(horizontal = 4.dp, vertical = 2.dp)
                                    .animateContentSize()
                                    .animateItem()
