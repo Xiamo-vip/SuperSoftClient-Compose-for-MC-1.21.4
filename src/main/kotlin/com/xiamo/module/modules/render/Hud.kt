@@ -3,8 +3,12 @@ package com.xiamo.module.modules.render
 import androidx.compose.animation.Animatable
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.expandIn
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
@@ -15,13 +19,14 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.absoluteOffset
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.contextmenu.modifier.filterTextContextMenuComponents
-import androidx.compose.material.Card
-import androidx.compose.material.Text
+import androidx.compose.material3.Card
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -42,21 +47,27 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.painter.BrushPainter
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInParent
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.xiamo.module.ComposeModule
 import com.xiamo.module.ModuleManager
+import com.xiamo.module.modules.combat.KillAura
 import com.xiamo.setting.AbstractSetting
+import com.xiamo.setting.BooleanSetting
 import com.xiamo.setting.ModeSetting
 import com.xiamo.setting.StringSetting
+import com.xiamo.utils.config.ConfigManager
+import net.minecraft.client.MinecraftClient
+import net.minecraft.entity.LivingEntity
 
 import org.jetbrains.skia.paragraph.Shadow
 
 object Hud : ComposeModule("Hud","界面") {
     var title = StringSetting("Title","HUD标题","SuperSoft")
-
 
     init {
         this.enabled = true
@@ -124,6 +135,30 @@ object Hud : ComposeModule("Hud","界面") {
 //
 //
 //                }
+
+
+            }
+
+
+            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.CenterStart){
+                AnimatedVisibility(visible = KillAura.isAttacking.value,enter = fadeIn() + scaleIn(), exit = fadeOut() + scaleOut() ) {
+                    var positon : Offset? = null
+                    if (KillAura.targetBarSetting.value) {
+                        Row(modifier = Modifier
+                            .padding(start = 50.dp)
+                            .width(150.dp)
+                            .height(60.dp)
+                            .background(Color.Black.copy(0.5f),RoundedCornerShape(10.dp))
+                            .onGloballyPositioned{
+                                layoutCoordinates ->
+                                    positon = layoutCoordinates.positionInParent()
+                            }
+                        )
+                        {
+                            KillAura.targetObject.
+                        }
+                    }
+                }
 
 
             }

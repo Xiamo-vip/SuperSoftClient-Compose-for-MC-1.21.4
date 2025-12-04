@@ -1,6 +1,6 @@
 package com.xiamo.event
 
-import androidx.compose.material.Switch
+import androidx.compose.material3.Switch
 import com.xiamo.SuperSoft
 import com.xiamo.gui.titleScreen.TitleScreen
 import com.xiamo.module.ModuleManager

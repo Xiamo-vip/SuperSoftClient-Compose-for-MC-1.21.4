@@ -44,18 +44,13 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonColors
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.SecureTextField
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.material.TextField
-import androidx.compose.material.TextFieldDefaults
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -125,7 +120,7 @@ class MusicPlayerScreen(var parentScreen : Screen? = null) : ComposeScreen(Text.
 
         val leftButtonModifier = Modifier.width(width = buttonWidth).height(buttonHeight)
         val leftButtonShape = RoundedCornerShape(20.dp)
-        val leftButtonColors = ButtonDefaults.buttonColors(backgroundColor = Color.Transparent, contentColor = Color.White)
+        val leftButtonColors = ButtonDefaults.buttonColors(containerColor = Color.Transparent, contentColor = Color.White)
 
         var searchVisible = remember { mutableStateOf(false) }
 
@@ -259,7 +254,7 @@ class MusicPlayerScreen(var parentScreen : Screen? = null) : ComposeScreen(Text.
                                 onClick = { MediaPlayer.toggle() },
                                 contentPadding = PaddingValues(0.dp),
                                 shape = RoundedCornerShape(10.dp),
-                                colors = ButtonDefaults.buttonColors(backgroundColor = Color(252,64,74)),
+                                colors = ButtonDefaults.buttonColors(containerColor = Color(252,64,74)),
                                 modifier = Modifier
                                     .size(width = 50.dp, height = 16.dp)
                                     .align(Alignment.Center)
@@ -380,7 +375,7 @@ class MusicPlayerScreen(var parentScreen : Screen? = null) : ComposeScreen(Text.
                         .width(30.dp)
                         .height(20.dp)
 
-                        ,contentPadding = PaddingValues(0.dp),colors = ButtonDefaults.buttonColors(backgroundColor = Color.Black.copy(alpha = 0.5f),contentColor = Color.White,)){
+                        ,contentPadding = PaddingValues(0.dp),colors = ButtonDefaults.buttonColors(containerColor = Color.Black.copy(alpha = 0.5f),contentColor = Color.White,)){
                         Icon(SuperSoft.javaClass.getResourceAsStream("/assets/supersoft/ui/icon/search.png").readAllBytes().decodeToImageBitmap(), contentDescription = "Serach", tint = Color.White,modifier = Modifier.size(12.dp))
                     }
                 }

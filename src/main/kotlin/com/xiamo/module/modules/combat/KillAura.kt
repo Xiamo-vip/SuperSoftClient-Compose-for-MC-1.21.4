@@ -1,5 +1,7 @@
 package com.xiamo.module.modules.combat
 
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import com.xiamo.module.Category
 import com.xiamo.module.Module
 import com.xiamo.setting.AbstractSetting
@@ -15,8 +17,9 @@ import java.util.concurrent.CopyOnWriteArrayList
 /**
  * KillAura
  */
-object KillAura : Module("Kill Aura", "自动攻击附近的实体", Category.Combat) {
-
+object KillAura : Module("KillAura", "自动攻击附近的实体", Category.Combat) {
+    var isAttacking = mutableStateOf(false)
+    var targetObject: LivingEntity? = null
 
     private val rangeSetting = numberSetting(
         "Range", "攻击范围",
@@ -52,6 +55,10 @@ object KillAura : Module("Kill Aura", "自动攻击附近的实体", Category.Co
 
     private val autoAttackSetting = booleanSetting(
         "AutoAttack", "自动攻击",
+        true
+    )
+    public val targetBarSetting = booleanSetting(
+        "TargetBar", "目标信息",
         true
     )
 
@@ -114,6 +121,7 @@ object KillAura : Module("Kill Aura", "自动攻击附近的实体", Category.Co
         }
 
         if (targets.isEmpty()) {
+            isAttacking.value = false
             currentTarget = null
             lastTargetPos = null
             RotationManager.clearTarget()
@@ -122,6 +130,8 @@ object KillAura : Module("Kill Aura", "自动攻击附近的实体", Category.Co
 
 
         val target = targets.minByOrNull { it.distanceTo(player) } ?: return
+        isAttacking.value = true
+        targetObject = target
 
 
         val targetPos = getTargetPosition(target)
@@ -155,6 +165,9 @@ object KillAura : Module("Kill Aura", "自动攻击附近的实体", Category.Co
                 attackTarget(target)
             }
         }
+
+
+
 
         super.onTick()
     }
@@ -284,7 +297,7 @@ object KillAura : Module("Kill Aura", "自动攻击附近的实体", Category.Co
         val yawDiff = kotlin.math.abs(MathHelper.wrapDegrees(rotation.yaw - player.yaw))
         val pitchDiff = kotlin.math.abs(rotation.pitch - player.pitch)
 
-        // 角度在范围内就攻击
+
         return yawDiff < 30f && pitchDiff < 30f
     }
 

@@ -24,9 +24,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Text
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -111,7 +111,7 @@ fun MenuButton(
                 )
             },
         colors = ButtonDefaults.buttonColors(
-            backgroundColor = Color.Black,
+            containerColor = Color.Black,
             contentColor = Color.White
         ),
         shape = RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp),

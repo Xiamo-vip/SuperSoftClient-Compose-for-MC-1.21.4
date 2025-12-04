@@ -15,14 +15,14 @@ import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material.*
-import androidx.compose.material.ripple
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Brush
@@ -89,16 +89,17 @@ class ClickGuiWindow(val x: Int, val y: Int, val category: Category, val width: 
             verticalArrangement = Arrangement.Top
         ) {
             Card(
-                elevation = 10.dp,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(height.dp)
                     .shadow(5.dp, RoundedCornerShape(radius))
                     .hoverable(interfaceSource),
-                backgroundColor = ClickGuiColors.titleBgColor,
+                colors = CardDefaults.cardColors(containerColor = ClickGuiColors.titleBgColor),
+                elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),
                 shape = RoundedCornerShape(radius)
             ) {
                 Text(
+                    modifier = Modifier.fillMaxWidth(),
                     textAlign = TextAlign.Center,
                     text = category.name,
                     fontSize = categoryTitleFont,
@@ -215,44 +216,63 @@ class ClickGuiWindow(val x: Int, val y: Int, val category: Category, val width: 
             targetValue = if (isHovered) 1f else 0f,
             animationSpec = tween(durationMillis = 150)
         )
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(ClickGuiColors.settingHoverColor.copy(alpha = bgAlpha))
-                .hoverable(interactionSource)
+        Row(modifier = Modifier.fillMaxWidth().height(15.dp).hoverable(interactionSource)
                 .clickable {
                     setting.value = !setting.value
                     module.onSettingChanged(setting)
                 }
-                .padding(vertical = 2.dp, horizontal = 4.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
+                .padding(vertical = 2.dp, horizontal = 4.dp), horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically) {
             Text(
                 text = setting.name,
                 fontSize = settingFont,
                 color = ClickGuiColors.textSecondaryColor
             )
-
-            Box(
-                modifier = Modifier
-                    .size(12.dp)
-                    .background(
-                        if (setting.value) ClickGuiColors.accentColor else Color.Gray,
-                        RoundedCornerShape(2.dp)
-                    )
-            ) {
-                if (setting.value) {
-                    Text(
-                        text = "✓",
-                        fontSize = 8.sp,
-                        color = ClickGuiColors.textColor,
-                        modifier = Modifier.align(Alignment.Center)
-                    )
-                }
-            }
+            Switch(
+                checked = setting.value,
+                onCheckedChange = {setting.value = it},
+                modifier = Modifier.scale(0.25f),
+                colors = SwitchDefaults.colors(checkedTrackColor = Color.Blue),
+            )
         }
+
+//        Row(
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .background(ClickGuiColors.settingHoverColor.copy(alpha = bgAlpha))
+//                .hoverable(interactionSource)
+//                .clickable {
+//                    setting.value = !setting.value
+//                    module.onSettingChanged(setting)
+//                }
+//                .padding(vertical = 2.dp, horizontal = 4.dp),
+//            horizontalArrangement = Arrangement.SpaceBetween,
+//            verticalAlignment = Alignment.CenterVertically
+//        ) {
+//            Text(
+//                text = setting.name,
+//                fontSize = settingFont,
+//                color = ClickGuiColors.textSecondaryColor
+//            )
+//
+//            Box(
+//                modifier = Modifier
+//                    .size(12.dp)
+//                    .background(
+//                        if (setting.value) ClickGuiColors.accentColor else Color.Gray,
+//                        RoundedCornerShape(2.dp)
+//                    )
+//            ) {
+//                if (setting.value) {
+//                    Text(
+//                        text = "✓",
+//                        fontSize = 8.sp,
+//                        color = ClickGuiColors.textColor,
+//                        modifier = Modifier.align(Alignment.Center)
+//                    )
+//                }
+//            }
+//        }
     }
 
     @Composable

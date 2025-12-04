@@ -10,11 +10,6 @@ import java.io.File
 import java.io.FileReader
 import java.io.FileWriter
 
-/**
- * 配置管理器
- * 负责保存和读取所有模块的配置
- * Log由ai处理描述不一定准确
- */
 object ConfigManager {
 
     private val gson = GsonBuilder().setPrettyPrinting().create()
@@ -23,13 +18,22 @@ object ConfigManager {
         if (!it.exists()) it.mkdirs()
     }
 
-    private val configFile: File = File(mainDir, "config.json")
 
+    private val configDir = File(mainDir, "Config").also {
+        if (!it.exists()) it.mkdirs()
+    }
+
+
+    private val modulesDir = File(configDir, "modules").also {
+        if (!it.exists()) it.mkdirs()
+    }
 
     private var loaded = false
 
 
-
+    private fun getModuleConfigFile(module: Module): File {
+        return File(modulesDir, "${module.name}.json")
+    }
 
     fun init() {
         load()
@@ -41,93 +45,87 @@ object ConfigManager {
 
 
     fun save() {
+        ModuleManager.modules.forEach { module ->
+            saveModule(module)
+        }
+        SuperSoft.logger.info("All module configs saved to ${modulesDir.absolutePath}")
+    }
+
+
+    fun saveModule(module: Module) {
         try {
-            val rootObject = JsonObject()
+            val moduleObject = JsonObject()
 
 
-            ModuleManager.modules.forEach { module ->
-                val moduleObject = JsonObject()
+            moduleObject.addProperty("enabled", module.enabled)
 
 
-                moduleObject.addProperty("enabled", module.enabled)
+            moduleObject.addProperty("key", module.key)
 
 
-                moduleObject.addProperty("key", module.key)
-
-
-                val settingsObject = JsonObject()
-                module.settings.forEach { setting ->
-                    settingsObject.add(setting.name, setting.toJson())
-                }
-                moduleObject.add("settings", settingsObject)
-
-                rootObject.add(module.name, moduleObject)
+            val settingsObject = JsonObject()
+            module.settings.forEach { setting ->
+                settingsObject.add(setting.name, setting.toJson())
             }
+            moduleObject.add("settings", settingsObject)
 
 
+            val configFile = getModuleConfigFile(module)
             FileWriter(configFile).use { writer ->
-                gson.toJson(rootObject, writer)
+                gson.toJson(moduleObject, writer)
             }
-
-            SuperSoft.logger.info("Config saved to ${configFile.absolutePath}")
         } catch (e: Exception) {
-            SuperSoft.logger.error("Failed to save config: ${e.message}")
+            SuperSoft.logger.error("Failed to save module config for ${module.name}: ${e.message}")
             e.printStackTrace()
         }
     }
 
 
     fun load() {
+        ModuleManager.modules.forEach { module ->
+            loadModule(module)
+        }
+        SuperSoft.logger.info("All module configs loaded from ${modulesDir.absolutePath}")
+        loaded = true
+    }
+
+
+    private fun loadModule(module: Module) {
+        val configFile = getModuleConfigFile(module)
+
         if (!configFile.exists()) {
-            SuperSoft.logger.info("Config file not found, using defaults")
-            loaded = true
             return
         }
 
         try {
             FileReader(configFile).use { reader ->
-                val rootObject = JsonParser.parseReader(reader).asJsonObject
-
-                ModuleManager.modules.forEach { module ->
-                    if (rootObject.has(module.name)) {
-                        val moduleObject = rootObject.getAsJsonObject(module.name)
+                val moduleObject = JsonParser.parseReader(reader).asJsonObject
 
 
-                        if (moduleObject.has("enabled")) {
-                            val shouldBeEnabled = moduleObject.get("enabled").asBoolean
-                            module.enabled = shouldBeEnabled
-                        }
+                if (moduleObject.has("enabled")) {
+                    val shouldBeEnabled = moduleObject.get("enabled").asBoolean
+                    module.enabled = shouldBeEnabled
+                }
 
 
-                        if (moduleObject.has("key")) {
-                            module.key = moduleObject.get("key").asInt
-                        }
+                if (moduleObject.has("key")) {
+                    module.key = moduleObject.get("key").asInt
+                }
 
 
-                        if (moduleObject.has("settings")) {
-                            val settingsObject = moduleObject.getAsJsonObject("settings")
-                            module.settings.forEach { setting ->
-                                if (settingsObject.has(setting.name)) {
-                                    setting.fromJson(settingsObject.get(setting.name))
-                                }
-                            }
+                if (moduleObject.has("settings")) {
+                    val settingsObject = moduleObject.getAsJsonObject("settings")
+                    module.settings.forEach { setting ->
+                        if (settingsObject.has(setting.name)) {
+                            setting.fromJson(settingsObject.get(setting.name))
                         }
                     }
                 }
             }
-
-            SuperSoft.logger.info("Config loaded from ${configFile.absolutePath}")
-            loaded = true
         } catch (e: Exception) {
-            SuperSoft.logger.error("Failed to load config: ${e.message}")
+            SuperSoft.logger.error("Failed to load module config for ${module.name}: ${e.message}")
             e.printStackTrace()
-            loaded = true
         }
-    }
-
-
-    fun saveModule(module: Module) {
-        save()
     }
 
 
@@ -135,8 +133,8 @@ object ConfigManager {
         ModuleManager.modules.forEach { module ->
             module.enabled = false
             module.settings.forEach { it.reset() }
+            saveModule(module)
         }
-        save()
     }
 
 
@@ -146,25 +144,57 @@ object ConfigManager {
     }
 
 
-    fun exportConfig(file: File) {
+    fun exportConfig(exportDir: File) {
         try {
-            configFile.copyTo(file, overwrite = true)
-            SuperSoft.logger.info("Config exported to ${file.absolutePath}")
+            val exportModulesDir = File(exportDir, "modules").also {
+                if (!it.exists()) it.mkdirs()
+            }
+
+            ModuleManager.modules.forEach { module ->
+                val sourceFile = getModuleConfigFile(module)
+                if (sourceFile.exists()) {
+                    val targetFile = File(exportModulesDir, "${module.name}.json")
+                    sourceFile.copyTo(targetFile, overwrite = true)
+                }
+            }
+            SuperSoft.logger.info("Config exported to ${exportDir.absolutePath}")
         } catch (e: Exception) {
             SuperSoft.logger.error("Failed to export config: ${e.message}")
         }
     }
 
 
-    fun importConfig(file: File) {
+    fun importConfig(importDir: File) {
         try {
-            if (file.exists()) {
-                file.copyTo(configFile, overwrite = true)
-                load()
-                SuperSoft.logger.info("Config imported from ${file.absolutePath}")
+            val importModulesDir = File(importDir, "modules")
+            if (!importModulesDir.exists()) {
+                SuperSoft.logger.error("Import directory does not contain modules folder")
+                return
             }
+
+            ModuleManager.modules.forEach { module ->
+                val sourceFile = File(importModulesDir, "${module.name}.json")
+                if (sourceFile.exists()) {
+                    val targetFile = getModuleConfigFile(module)
+                    sourceFile.copyTo(targetFile, overwrite = true)
+                }
+            }
+            load()
+            SuperSoft.logger.info("Config imported from ${importDir.absolutePath}")
         } catch (e: Exception) {
             SuperSoft.logger.error("Failed to import config: ${e.message}")
+        }
+    }
+
+
+    fun deleteModuleConfig(module: Module) {
+        try {
+            val configFile = getModuleConfigFile(module)
+            if (configFile.exists()) {
+                configFile.delete()
+            }
+        } catch (e: Exception) {
+            SuperSoft.logger.error("Failed to delete module config for ${module.name}: ${e.message}")
         }
     }
 }

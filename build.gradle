@@ -55,7 +55,7 @@ dependencies {
 	shade(compose.desktop.currentOs) // 如果你用了 compose 插件
 	shade(compose.ui)
 	shade(compose.foundation)
-	shade(compose.material)
+	shade(compose.material3)
 	shade(compose.runtime)
 	shade("org.jetbrains.compose.ui:ui-desktop")
     shade("javazoom:jlayer:1.0.1")
