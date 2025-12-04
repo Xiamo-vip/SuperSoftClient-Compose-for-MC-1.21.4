@@ -155,7 +155,7 @@ object Hud : ComposeModule("Hud","界面") {
                             }
                         )
                         {
-                            KillAura.targetObject.
+                            KillAura.targetObject
                         }
                     }
                 }
