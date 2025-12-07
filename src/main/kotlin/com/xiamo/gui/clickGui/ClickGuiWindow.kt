@@ -2,8 +2,13 @@ package com.xiamo.gui.clickGui
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animate
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.animateValueAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
@@ -124,7 +129,9 @@ class ClickGuiWindow(val x: Int, val y: Int, val category: Category, val width: 
     private fun ModuleItem(module: Module) {
         val interactionSource = remember { MutableInteractionSource() }
         val isHovered by interactionSource.collectIsHoveredAsState()
+        val fontWeightAnimation = animateFloatAsState(if (module.enabled) 500f else 5f,
 
+        )
         val moduleBgColor by animateColorAsState(
             targetValue = when {
                 isHovered -> ClickGuiColors.moduleHoverBgColor
@@ -164,7 +171,7 @@ class ClickGuiWindow(val x: Int, val y: Int, val category: Category, val width: 
                 Text(
                     text = module.name,
                     fontSize = categoryContentFont,
-                    fontWeight = FontWeight.Light,
+                    fontWeight = FontWeight(fontWeightAnimation.value.toInt()),
                     color = ClickGuiColors.textColor,
                     modifier = Modifier.weight(1f)
                 )
