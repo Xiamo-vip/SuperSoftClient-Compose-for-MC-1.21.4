@@ -16,7 +16,7 @@ object Sprint : Module("Sprint","强制疾跑", Category.Movement) {
                 && !player.isSwimming
                 && !player.isClimbing
                 ){
-                player.isSprinting = true
+                mc.options.sprintKey.isPressed = true
             }
         }
 

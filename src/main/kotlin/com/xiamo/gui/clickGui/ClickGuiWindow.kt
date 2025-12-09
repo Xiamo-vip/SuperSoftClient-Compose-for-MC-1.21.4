@@ -2,6 +2,7 @@ package com.xiamo.gui.clickGui
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.Spring
@@ -18,6 +19,7 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.*
@@ -35,6 +37,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.PointerEventType
+import androidx.compose.ui.input.pointer.isSecondaryPressed
 import androidx.compose.ui.input.pointer.onPointerEvent
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -124,7 +127,8 @@ class ClickGuiWindow(val x: Int, val y: Int, val category: Category, val width: 
         }
     }
 
-    @OptIn(ExperimentalFoundationApi::class)
+
+    @OptIn(ExperimentalComposeUiApi::class)
     @Composable
     private fun ModuleItem(module: Module) {
         val interactionSource = remember { MutableInteractionSource() }
@@ -154,14 +158,14 @@ class ClickGuiWindow(val x: Int, val y: Int, val category: Category, val width: 
                     .fillMaxWidth()
                     .background(moduleBgColor)
                     .combinedClickable(
-                        interactionSource = remember { MutableInteractionSource() },
+                        interactionSource = remember { MutableInteractionSource()},
                         indication = ripple(true, 200.dp, Color.DarkGray),
                         onClick = { module.toggle() },
                         onLongClick = {
                             if (hasSettings) {
                                 module.settingsExpanded = !module.settingsExpanded
                             }
-                        }
+                        },
                     )
                     .hoverable(interactionSource)
                     .padding(horizontal = 8.dp, vertical = 2.dp),
@@ -193,14 +197,18 @@ class ClickGuiWindow(val x: Int, val y: Int, val category: Category, val width: 
                 enter = expandVertically(),
                 exit = shrinkVertically()
             ) {
-                Column(
+                LazyColumn(
                     modifier = Modifier
                         .fillMaxWidth()
                         .background(ClickGuiColors.settingBgColor)
                         .padding(start = 8.dp, end = 4.dp, top = 2.dp, bottom = 2.dp)
+                        .animateContentSize()
+                        .animateEnterExit()
                 ) {
                     module.settings.filter { it.isVisible() }.forEach { setting ->
-                        SettingItem(setting, module)
+                        item {
+                            SettingItem(setting, module)
+                        }
                     }
                 }
             }

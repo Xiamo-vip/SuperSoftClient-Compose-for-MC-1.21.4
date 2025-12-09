@@ -1,24 +1,16 @@
 package com.xiamo.module
 
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.InternalComposeUiApi
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.asComposeCanvas
-import androidx.compose.ui.input.pointer.PointerEventType
-import androidx.compose.ui.input.pointer.PointerId
-import androidx.compose.ui.input.pointer.PointerType
 import androidx.compose.ui.scene.CanvasLayersComposeScene
 import androidx.compose.ui.scene.ComposeScene
-import androidx.compose.ui.scene.ComposeScenePointer
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntSize
 import com.mojang.blaze3d.systems.RenderSystem
-import com.xiamo.mixin.MixinMouse
 import com.xiamo.utils.GlStateUtil
-import com.xiamo.utils.bridge.MouseBridge
-import com.xiamo.utils.bridge.MousePosition
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.DrawContext
 import org.jetbrains.skia.BackendRenderTarget

@@ -24,7 +24,6 @@ import com.xiamo.notification.NotificationManager
 import com.xiamo.notification.Notify
 import com.xiamo.setting.*
 import net.minecraft.client.gui.DrawContext
-import net.minecraft.client.render.entity.state.EntityRenderState
 import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.entity.Entity
 import java.util.concurrent.CopyOnWriteArrayList
