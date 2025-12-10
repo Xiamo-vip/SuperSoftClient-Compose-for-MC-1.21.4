@@ -70,8 +70,7 @@ object Hud : ComposeModule("Hud","界面") {
             Box(contentAlignment = Alignment.TopEnd, modifier = Modifier.fillMaxSize()) {
                 LazyColumn(horizontalAlignment = Alignment.End, modifier = Modifier.width(200.dp)){
                     ModuleManager.modules.filter { it.enabled }.sortedBy {
-                        val args = it.settings.filterIsInstance(ModeSetting::class.java).firstOrNull()?.value
-                        (it.name  + if (args == null) "" else " | ${args}").chars().count()
+                        (it.name  + if (it.settings.filterIsInstance(ModeSetting::class.java).firstOrNull()?.value == null) "" else " | ${it.settings.filterIsInstance(ModeSetting::class.java).firstOrNull()?.value}").length
                     }.forEach {module ->
                        item {
                            val args = module.settings.filterIsInstance(ModeSetting::class.java).firstOrNull()?.value

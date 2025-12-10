@@ -77,7 +77,7 @@ open class Module(val name: String, val description: String, val category: Categ
     open fun onMouseReleased(mouseX: Int, mouseY: Int) {}
     open fun renderEntity(entity: Entity,matrix : MatrixStack,tickDelta : Float) {}
     open fun enable() {
-        NotificationManager.notifies.add(Notify(this.name, "Toggled", 800L, {
+        NotificationManager.notifies.add(Notify(this.name, "Toggled", 600L, {
             Row(
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
@@ -104,7 +104,7 @@ open class Module(val name: String, val description: String, val category: Categ
     }
 
     open fun disable() {
-        NotificationManager.notifies.add(Notify(this.name, "Toggled", 800L, {
+        NotificationManager.notifies.add(Notify(this.name, "Toggled", 600L, {
             Row(
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically

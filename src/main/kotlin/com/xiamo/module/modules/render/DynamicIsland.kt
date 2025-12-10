@@ -39,7 +39,7 @@ import net.minecraft.client.MinecraftClient
 
 object DynamicIsland : ComposeModule("DynamicIsland","灵动岛") {
 
-    var defaultTitle = mutableStateOf("DynamicIsland Beta 🙂 FPS：{fps}")
+    var defaultTitle = mutableStateOf("SuperSoft 🙂 FPS：{fps}")
 
     init {
         this.enabled = true

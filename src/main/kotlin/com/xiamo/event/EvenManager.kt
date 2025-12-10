@@ -46,7 +46,7 @@ object  EvenManager {
 
     @EventTarget
     fun keyBoardEvent(event: KeyBoardEvent){
-        if (event.action == GLFW.GLFW_PRESS){
+        if (event.action == GLFW.GLFW_PRESS && MinecraftClient.getInstance().currentScreen == null) {
             ModuleManager.modules.forEach {
                 if (event.key == it.key){
                     it.toggle()

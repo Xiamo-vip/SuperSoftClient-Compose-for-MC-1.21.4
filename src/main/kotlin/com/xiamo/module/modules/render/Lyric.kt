@@ -24,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -45,8 +46,7 @@ object Lyric : ComposeModule("Lyric", "歌词显示") {
     var currentIndex = mutableStateOf(0)
     var isVisible = mutableStateOf(false)
 
-    private val containerHeight = 100
-    private val containerWidth = 110
+
 
     init {
         this.enabled = true
@@ -61,6 +61,8 @@ object Lyric : ComposeModule("Lyric", "歌词显示") {
     override fun renderCompose() {
         val listState = rememberLazyListState()
         val scope = rememberCoroutineScope()
+        val containerHeight by remember { mutableStateOf(40) }
+        val containerWidth by remember { mutableStateOf(200) }
 
         LaunchedEffect(MediaPlayer.isPlaying.value) {
             isVisible.value = MediaPlayer.isPlaying.value
@@ -74,8 +76,8 @@ object Lyric : ComposeModule("Lyric", "歌词显示") {
             Box(modifier = Modifier.fillMaxSize()) {
                 Box(
                     modifier = Modifier
-                        .align(Alignment.CenterStart)
-                        .padding(6.dp)
+                        .align(Alignment.BottomCenter)
+                        .padding(bottom = 50.dp)
                         .clip(RoundedCornerShape(10.dp))
                         .background(Color.Black.copy(alpha = 0.7f))
                         .height(containerHeight.dp)
