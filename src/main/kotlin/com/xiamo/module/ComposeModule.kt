@@ -178,8 +178,6 @@ open class ComposeModule(name : String, description : String) : Module(name,desc
     fun saveComponentPositions(positions: Map<String, Pair<Float, Float>>) {
         componentPositions.clear()
         componentPositions.putAll(positions)
-
-
         positions.forEach { (componentId, pos) ->
             val xKey = "Component_${componentId}_X"
             val yKey = "Component_${componentId}_Y"
@@ -202,7 +200,6 @@ open class ComposeModule(name : String, description : String) : Module(name,desc
                 ySetting.value = pos.second.toDouble()
             }
         }
-
         com.xiamo.utils.config.ConfigManager.saveModule(this)
     }
 

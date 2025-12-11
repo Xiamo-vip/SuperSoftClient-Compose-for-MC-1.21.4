@@ -4,6 +4,8 @@ import com.google.gson.GsonBuilder
 import com.google.gson.JsonObject
 import com.google.gson.JsonParser
 import com.xiamo.SuperSoft
+import com.xiamo.gui.hud.HudEditorManager
+import com.xiamo.module.ComposeModule
 import com.xiamo.module.Module
 import com.xiamo.module.ModuleManager
 import java.io.File
@@ -37,9 +39,9 @@ object ConfigManager {
 
     fun init() {
         load()
-        Runtime.getRuntime().addShutdownHook(Thread {
-            save()
-        })
+//        Runtime.getRuntime().addShutdownHook(Thread {
+//            save()
+//        })
         SuperSoft.logger.info("ConfigManager initialized")
     }
 
@@ -54,15 +56,10 @@ object ConfigManager {
 
     fun saveModule(module: Module) {
         try {
+
             val moduleObject = JsonObject()
-
-
             moduleObject.addProperty("enabled", module.enabled)
-
-
             moduleObject.addProperty("key", module.key)
-
-
             val settingsObject = JsonObject()
             module.settings.forEach { setting ->
                 settingsObject.add(setting.name, setting.toJson())

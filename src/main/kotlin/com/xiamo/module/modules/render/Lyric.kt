@@ -75,37 +75,40 @@ object Lyric : ComposeModule("Lyric", "歌词显示") {
         ) {
             Box(modifier = Modifier.fillMaxSize()) {
                 Box(contentAlignment = Alignment.BottomCenter, modifier = Modifier.fillMaxSize()) {
-                    com.xiamo.gui.hud.HudComponent(
-                        componentId = "lyric",
-                        moduleName = "Lyric",
-                        defaultX = (net.minecraft.client.MinecraftClient.getInstance().window.width / 2f) - (containerWidth / 2f),
-                        defaultY = net.minecraft.client.MinecraftClient.getInstance().window.height.toFloat() - containerHeight.toFloat() - 50f
+                    Box(
+                        modifier = Modifier
+                            .padding(bottom = 45.dp)
+                            .clip(RoundedCornerShape(10.dp))
+                            .background(Color.Black.copy(alpha = 0.7f))
+                            .height(containerHeight.dp)
+                            .width(containerWidth.dp)
                     ) {
-                Box(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(10.dp))
-                        .background(Color.Black.copy(alpha = 0.7f))
-                        .height(containerHeight.dp)
-                        .width(containerWidth.dp)
-                ) {
-                    LazyColumn(
-                        modifier = Modifier.fillMaxSize(),
-                        state = listState,
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center,
-                        contentPadding = PaddingValues(vertical = (containerHeight / 2 - 10).dp)
-                    ) {
-                        itemsIndexed(MediaPlayer.lyric) { index, line ->
-                            val distance = abs(index - currentIndex.value)
-                            AppleMusicLyricLine(
-                                text = line.text,
-                                distance = distance,
-                                isCurrent = index == currentIndex.value
-                            )
+                        LazyColumn(
+                            modifier = Modifier.fillMaxSize(),
+                            state = listState,
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                            verticalArrangement = Arrangement.Center,
+                            contentPadding = PaddingValues(vertical = (containerHeight / 2 - 10).dp)
+                        ) {
+                            itemsIndexed(MediaPlayer.lyric) { index, line ->
+                                val distance = abs(index - currentIndex.value)
+                                AppleMusicLyricLine(
+                                    text = line.text,
+                                    distance = distance,
+                                    isCurrent = index == currentIndex.value
+                                )
+                            }
                         }
                     }
-                }
-                }
+
+//                    com.xiamo.gui.hud.HudComponent(
+//                        componentId = "lyric",
+//                        moduleName = "Lyric",
+//                        defaultX = (net.minecraft.client.MinecraftClient.getInstance().window.width / 2f) - (containerWidth / 2f),
+//                        defaultY = net.minecraft.client.MinecraftClient.getInstance().window.height.toFloat() - containerHeight.toFloat() - 50f
+//                    ) {
+//
+//                }
                 }
             }
         }

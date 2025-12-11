@@ -110,19 +110,16 @@ object NeteaseCloudApi {
             val songfile = NeteaseCloudApi.getFile(songID)
             val url = songfile.url
             val size = songfile.size
-            println("Downloading from URL: $url")
             val cacheDir = File(SuperSoft.dataPath, "cache")
             if (!cacheDir.exists()) {
                 val ok = cacheDir.mkdirs()
                 if (!ok) {
-                    println("Failed to create cache directory: ${cacheDir.absolutePath}")
                     return false
                 }
             }
 
             val file = File(cacheDir, "$songID.mp3")
             if (file.exists() && file.length() >= size.toLong()) {
-                println("Song already cached, playing directly: ${file.absolutePath}")
                 MediaPlayer.playSound(file,song)
                 return true
             }
@@ -136,7 +133,6 @@ object NeteaseCloudApi {
             val request = Request.Builder().url(url).build()
             client.newCall(request).execute().use { response ->
                 if (!response.isSuccessful) {
-                    println("Request failed with code: ${response.code}")
                     return false
                 }
                 val body = response.body
@@ -156,7 +152,6 @@ object NeteaseCloudApi {
             }))
 
             if (!file.exists() || file.length() == 0L) {
-                println("File was not written correctly: ${file.absolutePath}")
                 return false
             }
             MediaPlayer.playSound(file,song)
