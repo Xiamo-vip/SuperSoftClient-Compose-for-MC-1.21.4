@@ -22,7 +22,9 @@ import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.rememberScrollableState
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.hoverable
+import androidx.compose.foundation.interaction.Interaction
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -54,10 +56,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.currentRecomposeScope
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -65,10 +69,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.decodeToImageBitmap
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEvent
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.input.key.onPreviewKeyEvent
+import androidx.compose.ui.input.key.type
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.onPointerEvent
 import androidx.compose.ui.platform.LocalDensity
@@ -86,6 +98,7 @@ import com.xiamo.utils.misc.MediaPlayer
 import com.xiamo.utils.misc.NeteaseCloudApi
 import com.xiamo.utils.misc.Song
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
@@ -357,6 +370,7 @@ class MusicPlayerScreen(var parentScreen : Screen? = null) : ComposeScreen(Text.
 
     @Composable
     fun searchPage() {
+        val interactionSource = remember { MutableInteractionSource() }
         var visible by remember { mutableStateOf(false) }
         LaunchedEffect(Unit){
             visible = true
@@ -375,7 +389,7 @@ class MusicPlayerScreen(var parentScreen : Screen? = null) : ComposeScreen(Text.
                         .width(30.dp)
                         .height(20.dp)
 
-                        ,contentPadding = PaddingValues(0.dp),colors = ButtonDefaults.buttonColors(containerColor = Color.Black.copy(alpha = 0.5f),contentColor = Color.White,)){
+                        ,interactionSource = interactionSource,contentPadding = PaddingValues(0.dp),colors = ButtonDefaults.buttonColors(containerColor = Color.Black.copy(alpha = 0.5f),contentColor = Color.White,)){
                         Icon(SuperSoft.javaClass.getResourceAsStream("/assets/supersoft/ui/icon/search.png").readAllBytes().decodeToImageBitmap(), contentDescription = "Serach", tint = Color.White,modifier = Modifier.size(12.dp))
                     }
                 }

@@ -10,7 +10,9 @@ import androidx.compose.ui.scene.ComposeScene
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntSize
 import com.mojang.blaze3d.systems.RenderSystem
+import com.xiamo.utils.AWTUtils
 import com.xiamo.utils.GlStateUtil
+import com.xiamo.utils.glfwToAwtKeyCode
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.DrawContext
 import org.jetbrains.skia.BackendRenderTarget
@@ -20,7 +22,9 @@ import org.jetbrains.skia.FramebufferFormat
 import org.jetbrains.skia.Surface
 import org.jetbrains.skia.SurfaceColorFormat
 import org.jetbrains.skia.SurfaceOrigin
+import org.lwjgl.glfw.GLFW
 import org.lwjgl.opengl.GL33C
+import java.awt.event.KeyEvent
 
 @OptIn(InternalComposeUiApi::class)
 open class ComposeModule(name : String, description : String) : Module(name,description, Category.Render) {
@@ -131,8 +135,39 @@ open class ComposeModule(name : String, description : String) : Module(name,desc
 
     @Composable
     open fun renderCompose(){
-
-
     }
+
+    override fun onKey(keyCode: Int, keyState: Int) {
+        if (keyState == GLFW.GLFW_PRESS){
+            val event = AWTUtils.KeyEvent(
+                KeyEvent.KEY_PRESSED,
+                System.currentTimeMillis(),
+                AWTUtils.getAwtMods(MinecraftClient.getInstance().window.handle),
+                glfwToAwtKeyCode(keyCode),
+                KeyEvent.CHAR_UNDEFINED,
+                KeyEvent.KEY_LOCATION_STANDARD
+            )
+            composeScene?.sendKeyEvent(event)
+        }
+
+        if (keyState == GLFW.GLFW_RELEASE){
+            val awtKey = glfwToAwtKeyCode(keyCode)
+            val time = System.nanoTime() / 1_000_000
+            composeScene?.sendKeyEvent(
+                AWTUtils.KeyEvent(
+                    KeyEvent.KEY_RELEASED,
+                    time,
+                    AWTUtils.getAwtMods(MinecraftClient.getInstance().window.handle),
+                    awtKey,
+                    0.toChar(),
+                    KeyEvent.KEY_LOCATION_STANDARD
+                )
+            )
+        }
+
+
+        super.onKey(keyCode, keyState)
+    }
+
 
 }

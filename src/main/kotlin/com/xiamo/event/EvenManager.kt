@@ -55,6 +55,11 @@ object  EvenManager {
             }
         }
 
+        ModuleManager.modules.filter { it.enabled }.forEach {
+            it.onKey(event.key,event.action)
+        }
+
+
     }
 
     @EventTarget
