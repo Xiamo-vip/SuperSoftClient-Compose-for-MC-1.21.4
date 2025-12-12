@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.IntSize
 import com.mojang.blaze3d.systems.RenderSystem
 import com.xiamo.utils.AWTUtils
 import com.xiamo.utils.GlStateUtil
+import com.xiamo.utils.config.ConfigManager
 import com.xiamo.utils.glfwToAwtKeyCode
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.DrawContext
@@ -44,6 +45,7 @@ open class ComposeModule(name : String, description : String) : Module(name,desc
 
 
     private val componentPositions = mutableMapOf<String, Pair<Float, Float>>()
+
 
 
 
@@ -204,19 +206,14 @@ open class ComposeModule(name : String, description : String) : Module(name,desc
     }
 
     fun loadComponentPosition(componentId: String, defaultX: Float, defaultY: Float): Pair<Float, Float> {
-
-
+        val componentX = numberSetting("Component_${componentId}_X","组件位置",defaultX.toDouble(),0.0, 2000.0,.0)
+        val componentY = numberSetting("Component_${componentId}_Y","组件位置",defaultY.toDouble(),0.0,2000.0)
+        ConfigManager.load()
         componentPositions[componentId]?.let { return it }
+        val x = componentX.value.toFloat()
+        val y = componentY.value.toFloat()
 
 
-        val xKey = "Component_${componentId}_X"
-        val yKey = "Component_${componentId}_Y"
-
-        val xSetting = settings.find { it.name == xKey } as? com.xiamo.setting.NumberSetting
-        val ySetting = settings.find { it.name == yKey } as? com.xiamo.setting.NumberSetting
-
-        val x = xSetting?.value?.toFloat() ?: defaultX
-        val y = ySetting?.value?.toFloat() ?: defaultY
 
         val position = Pair(x, y)
         componentPositions[componentId] = position

@@ -19,6 +19,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.xiamo.SuperSoft
+import com.xiamo.gui.hud.HudEditorManager
 import com.xiamo.utils.config.ConfigManager
 import com.xiamo.notification.NotificationManager
 import com.xiamo.notification.Notify
@@ -138,5 +139,6 @@ open class Module(val name: String, val description: String, val category: Categ
 
     open fun onSettingChanged(setting: AbstractSetting<*>) {
         ConfigManager.saveModule(this)
+        ConfigManager.load()
     }
 }

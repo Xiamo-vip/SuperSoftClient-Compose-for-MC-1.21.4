@@ -56,8 +56,8 @@ object KeyboradHud : ComposeModule("KeyboradHud","键盘可视化") {
         val backPress = remember { mutableStateOf<PressInteraction.Press?>(null) }
         val leftPress = remember { mutableStateOf<PressInteraction.Press?>(null) }
         val rightPress = remember { mutableStateOf<PressInteraction.Press?>(null) }
-        val dirctionKeyWidth = remember { mutableStateOf(with(density) {5.dp.toPx()}  ) }
-        val dirctionKeyHeight = remember { mutableStateOf(with(density) {5.dp.toPx()}  ) }
+        val dirctionKeyWidth = 25.dp
+        val dirctionKeyHeight = 25.dp
         val offsetX = remember { mutableStateOf(with(density){0.dp.toPx()}) }
         val offsetY = remember { mutableStateOf(with(density){20.dp.toPx()}) }
         val buttonColor = ButtonDefaults.buttonColors(contentColor = Color.White, containerColor = Color.Black.copy(0.7f))

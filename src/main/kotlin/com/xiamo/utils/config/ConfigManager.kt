@@ -112,6 +112,12 @@ object ConfigManager {
 
                 if (moduleObject.has("settings")) {
                     val settingsObject = moduleObject.getAsJsonObject("settings")
+//                    settingsObject.forEach { setting ->
+//                        module.settings
+//                    }
+
+
+
                     module.settings.forEach { setting ->
                         if (settingsObject.has(setting.name)) {
                             setting.fromJson(settingsObject.get(setting.name))

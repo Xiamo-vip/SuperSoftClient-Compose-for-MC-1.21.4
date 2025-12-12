@@ -16,9 +16,11 @@ object SuperSoft : ModInitializer {
 		// Proceed with mild caution.
 		logger.info("SuperSoft Loaded")
 
+
 		EvenManager
 		ModuleManager
         ConfigManager.init()
+
 
 	}
 }
