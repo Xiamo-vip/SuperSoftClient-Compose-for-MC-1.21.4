@@ -7,6 +7,7 @@ plugins {
 	id "org.jetbrains.kotlin.jvm" version "2.2.21"
 	alias(libs.plugins.jetbrainsCompose)
 	alias(libs.plugins.compose.compiler)
+
 	id "com.gradleup.shadow" version "9.2.2"
 
 }

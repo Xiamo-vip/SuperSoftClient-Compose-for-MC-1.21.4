@@ -15,6 +15,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.graphics.drawscope.DrawScope
+import androidx.compose.ui.graphics.drawscope.DrawStyle
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.TextStyle
@@ -54,9 +55,6 @@ object NameTags : ComposeModule("NameTags", "NameTags") {
                 withFrameNanos { value = it }
             }
         }
-
-
-
 
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Canvas(modifier = Modifier.fillMaxSize()) {
@@ -173,6 +171,9 @@ object NameTags : ComposeModule("NameTags", "NameTags") {
                 screenPos.x - rectWidth / 2,screenPos.y - rectHeight /2 + rectHeight + 5),
                 size = Size((entity.health / entity.maxHealth) * rectWidth, 10f), cornerRadius = CornerRadius(105.0f),
             )
+
+
+
         }
 
 

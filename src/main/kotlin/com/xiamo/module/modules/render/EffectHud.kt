@@ -1,7 +1,9 @@
 package com.xiamo.module.modules.render
 
 import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,7 +20,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
+import androidx.compose.ui.graphics.BlurEffect
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.CompositingStrategy
+import androidx.compose.ui.graphics.RenderEffect
+import androidx.compose.ui.graphics.TileMode
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -35,6 +44,7 @@ object EffectHud : ComposeModule("EffectHud","效果显示") {
         val player = MinecraftClient.getInstance().player
         if(player == null) return
 
+
         Box(modifier = Modifier.fillMaxSize().padding(bottom = 10.dp, end = 2.dp).offset(y = 10.dp), contentAlignment = Alignment.CenterStart) {
             var collection: MutableCollection<StatusEffectInstance?> = player.statusEffects
             if (tickCounter.value != 0f) {
@@ -43,6 +53,8 @@ object EffectHud : ComposeModule("EffectHud","效果显示") {
                     return
                 }
             }
+
+
             LazyColumn(modifier = Modifier.animateContentSize() , reverseLayout = true) {
                 for (status in collection ) {
                     item {
