@@ -4,6 +4,7 @@ import com.xiamo.event.EvenManager
 import com.xiamo.module.ModuleManager
 import com.xiamo.utils.config.ConfigManager
 import net.fabricmc.api.ModInitializer
+import org.jetbrains.skiko.hostOs
 import org.slf4j.LoggerFactory
 
 object SuperSoft : ModInitializer {
@@ -16,6 +17,9 @@ object SuperSoft : ModInitializer {
 		// Proceed with mild caution.
 		logger.info("SuperSoft Loaded")
 
+		if (hostOs.isMacOS) {
+			System.setProperty("skiko.macos.opengl.enabled", "true")
+		}
 
 		EvenManager
 		ModuleManager
