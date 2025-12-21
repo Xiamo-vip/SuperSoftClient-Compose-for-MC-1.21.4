@@ -7,12 +7,14 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.FlowColumn
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.xiamo.module.Category
 import com.xiamo.module.Module
 import com.xiamo.notification.NotificationManager
@@ -70,24 +72,29 @@ object PlayerList : Module("PlayerList","PlayerList", Category.Render) {
             isVisible = true
         }
 
-        FlowColumn(verticalArrangement = Arrangement.Center, horizontalArrangement = Arrangement.Center, maxItemsInEachColumn = 9)
-        {
-            frameNanos
+        FlowColumn(maxItemsInEachColumn = 9) {
 
-            AnimatedVisibility(isVisible, enter = fadeIn()){
-                val players = MinecraftClient.getInstance().player!!.networkHandler.listedPlayerListEntries
-                players.sortedBy {
-                    if (it.gameMode == GameMode.SPECTATOR) 0 else 1
-                }
-                for (player in MinecraftClient.getInstance().world?.players!!){
+            val players = MinecraftClient.getInstance()
+                .player!!
+                .networkHandler
+                .listedPlayerListEntries
+                .sortedBy { if (it.gameMode == GameMode.SPECTATOR) 0 else 1 }
+            for (player in players) {
+                AnimatedVisibility(
+                    visible = isVisible,
+                    enter = fadeIn()
+                ) {
                     Row(Modifier.padding(3.dp)) {
-                        Text(player.nameForScoreboard, color = Color.White)
+                        Text(
+                            player.profile.name,
+                            color = Color.White,
+                            fontSize = 5.sp
+                        )
                     }
                 }
             }
-
-
         }
+
 
 
 

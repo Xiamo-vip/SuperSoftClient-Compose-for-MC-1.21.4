@@ -24,7 +24,6 @@ object ModuleManager {
 
 
     init {
-        modules.add(DynamicIsland)
         modules.add(Hud)
         modules.add(ClickGui)
         modules.add(MusicPlayer)
@@ -39,6 +38,7 @@ object ModuleManager {
         modules.add(NameTags)
         modules.add(ChestStealer)
         modules.add(PlayerList)
+        modules.add(DynamicIsland)
 
 
 

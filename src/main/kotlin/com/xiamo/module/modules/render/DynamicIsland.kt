@@ -31,6 +31,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import coil3.compose.AsyncImage
 import com.xiamo.module.ComposeModule
 import com.xiamo.notification.NotificationManager
@@ -62,6 +63,7 @@ object DynamicIsland : ComposeModule("DynamicIsland","灵动岛") {
         }
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
             LazyColumn(modifier = Modifier
+                .zIndex(10f)
                 .padding(top=16.dp)
                 .shadow(elevation = 10.dp)
                 .background(Color.Black, shape = RoundedCornerShape(10.dp))
