@@ -69,7 +69,6 @@ object DynamicIsland : ComposeModule("DynamicIsland","灵动岛") {
             LazyColumn(modifier = Modifier
                 .zIndex(10f)
                 .padding(top=16.dp)
-                .shadow(elevation = 10.dp)
                 .background(bgColor, shape = RoundedCornerShape(10.dp))
                 .animateContentSize()
                 .padding(horizontal = 10.dp)

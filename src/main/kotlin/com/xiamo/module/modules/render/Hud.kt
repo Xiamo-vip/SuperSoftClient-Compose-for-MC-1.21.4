@@ -3,8 +3,13 @@ package com.xiamo.module.modules.render
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -23,6 +28,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -63,6 +69,16 @@ object Hud : ComposeModule("Hud", "界面") {
     override fun renderCompose() {
         val screenWidth = MinecraftClient.getInstance().window.width.toFloat()
         val screenHeight = MinecraftClient.getInstance().window.height.toFloat()
+        val infiniteTransition = rememberInfiniteTransition(label = "rainbow")
+        val hueOffset by infiniteTransition.animateFloat(
+            initialValue = 0f,
+            targetValue = 1f,
+            animationSpec = infiniteRepeatable(
+                animation = tween(3000, easing = LinearEasing), // 3秒转一圈
+                repeatMode = RepeatMode.Restart
+            ),
+            label = "hue"
+        )
 
         Box(Modifier.fillMaxSize()) {
 
@@ -90,34 +106,35 @@ object Hud : ComposeModule("Hud", "界面") {
 
                 Box(Modifier.fillMaxSize(), contentAlignment = Alignment.TopEnd) {
                     LazyColumn(horizontalAlignment = Alignment.End, modifier = Modifier.width(200.dp)) {
-                        ModuleManager.modules.filter { it.enabled }.sortedBy {
-                            (it.name + if (it.settings.filterIsInstance(ModeSetting::class.java)
-                                    .firstOrNull()?.value == null
-                            ) "" else " | ${
-                                it.settings.filterIsInstance(ModeSetting::class.java).firstOrNull()?.value
-                            }").length
-                        }.forEach { module ->
-                            item {
-                                val args = module.settings.filterIsInstance(ModeSetting::class.java).firstOrNull()?.value
-                                Text(
-                                    text = module.name + if (args == null) "" else " | ${args}",
-                                    fontSize = 8.sp,
-                                    color = Color.White,
-                                    modifier = Modifier
-                                        .background(Color(0f, 0f, 0f, 0.6f), RoundedCornerShape(2.dp))
-                                        .padding(horizontal = 4.dp, vertical = 2.dp)
-                                        .animateContentSize()
-                                        .animateItem(placementSpec = spring(stiffness = Spring.StiffnessLow)),
-                                    textAlign = TextAlign.Right,
-                                    style = TextStyle(
-                                        shadow = androidx.compose.ui.graphics.Shadow(
-                                            Color.Black,
-                                            offset = Offset(1f, 1f),
-                                            blurRadius = 5f
-                                        )
+                        val enabledModules = ModuleManager.modules.filter { it.enabled }.sortedByDescending { module ->
+                            val mode = module.settings.filterIsInstance<ModeSetting>().firstOrNull()?.value
+                            val displayName = if (mode != null) "${module.name} | $mode" else module.name
+                            displayName.length
+                        }
+
+                        itemsIndexed(enabledModules) { index, module ->
+                            val currentHue = (hueOffset + index * 0.05f) % 1f
+                            val rainbowColor = Color.hsv(currentHue * 360f, 0.6f, 1f)
+                            val args = module.settings.filterIsInstance(ModeSetting::class.java).firstOrNull()?.value
+
+                            Text(
+                                text = module.name + (if (args == null) "" else " | $args"),
+                                fontSize = 8.sp,
+                                color = rainbowColor,
+                                modifier = Modifier
+                                    .background(Color(0f, 0f, 0f, 0.6f), RoundedCornerShape(2.dp))
+                                    .padding(horizontal = 4.dp, vertical = 2.dp)
+                                    .animateContentSize()
+                                    .animateItem(placementSpec = spring(stiffness = Spring.StiffnessLow)),
+                                textAlign = TextAlign.Right,
+                                style = TextStyle(
+                                    shadow = androidx.compose.ui.graphics.Shadow(
+                                        Color.Black,
+                                        offset = Offset(1f, 1f),
+                                        blurRadius = 5f
                                     )
                                 )
-                            }
+                            )
                         }
                     }
                 }
