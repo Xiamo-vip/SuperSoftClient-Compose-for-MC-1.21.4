@@ -3,9 +3,11 @@ package com.xiamo.mixin;
 import com.xiamo.event.RenderEvent;
 import com.xiamo.module.modules.render.EffectHud;
 import com.xiamo.module.modules.render.PlayerList;
+import com.xiamo.module.modules.render.ScoreBoard;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.client.render.RenderTickCounter;
+import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.scoreboard.ScoreboardObjective;
 import net.minecraft.server.MinecraftServer;
 import org.spongepowered.asm.mixin.Mixin;
@@ -35,6 +37,13 @@ public class MixinGameHud {
             ci.cancel();
         }
 
+    }
+
+    @Inject(method = "renderScoreboardSidebar*",at = @At("HEAD"), cancellable = true)
+    private void hookScoreBoardSidebar(DrawContext context, RenderTickCounter tickCounter, CallbackInfo ci){
+        if (ScoreBoard.INSTANCE.getEnabled()){
+            ci.cancel();
+        }
     }
 
 

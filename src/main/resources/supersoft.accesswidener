@@ -6,5 +6,6 @@ accessible field net/minecraft/network/packet/c2s/play/PlayerMoveC2SPacket chang
 
 accessible method net/minecraft/entity/Entity movementInputToVelocity (Lnet/minecraft/util/math/Vec3d;FF)Lnet/minecraft/util/math/Vec3d;
 accessible method net/minecraft/client/render/GameRenderer getFov (Lnet/minecraft/client/render/Camera;FZ)F
+accessible field net/minecraft/client/gui/hud/ChatHud messages Ljava/util/List;
 
 

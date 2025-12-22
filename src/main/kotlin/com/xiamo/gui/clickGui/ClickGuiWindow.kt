@@ -88,18 +88,22 @@ class ClickGuiWindow(val x: Int, val y: Int, val category: Category, val width: 
     val settingFont = 6.sp
     val radius: Dp = 2.dp
 
+
     @OptIn(ExperimentalFoundationApi::class)
     @Composable
     fun renderCompose() {
         val interfaceSource = remember { MutableInteractionSource() }
         isHover = interfaceSource.collectIsHoveredAsState().value
+        val client = MinecraftClient.getInstance()
+        val windowHeight = client.window.scaledHeight
+        val contentScrollState = rememberScrollState()
 
         Column(
             modifier = Modifier
                 .offset { IntOffset(windowX.roundToInt(), windowY.roundToInt()) }
                 .width(width.dp)
-                .background(ClickGuiColors.backgroundColor, RoundedCornerShape(radius)),
-            verticalArrangement = Arrangement.Top
+                .heightIn(max = (windowHeight * 0.7f).dp)
+                .background(ClickGuiColors.backgroundColor, RoundedCornerShape(radius))
         ) {
             Card(
                 modifier = Modifier
@@ -111,18 +115,27 @@ class ClickGuiWindow(val x: Int, val y: Int, val category: Category, val width: 
                 elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),
                 shape = RoundedCornerShape(radius)
             ) {
-                Text(
-                    modifier = Modifier.fillMaxWidth(),
-                    textAlign = TextAlign.Center,
-                    text = category.name,
-                    fontSize = categoryTitleFont,
-                    fontWeight = FontWeight.Normal,
-                    color = ClickGuiColors.textColor
-                )
+                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text(
+                        text = category.name,
+                        fontSize = categoryTitleFont,
+                        fontWeight = FontWeight.Normal,
+                        color = ClickGuiColors.textColor,
+                        textAlign = TextAlign.Center
+                    )
+                }
             }
 
-            ModuleManager.modules.filter { it.category.name == category.name }.forEach { module ->
-                ModuleItem(module)
+
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f, fill = false)
+                    .verticalScroll(contentScrollState)
+            ) {
+                ModuleManager.modules.filter { it.category.name == category.name }.forEach { module ->
+                    ModuleItem(module)
+                }
             }
         }
     }
@@ -197,7 +210,7 @@ class ClickGuiWindow(val x: Int, val y: Int, val category: Category, val width: 
                 enter = expandVertically(),
                 exit = shrinkVertically()
             ) {
-                LazyColumn(
+                Column(
                     modifier = Modifier
                         .fillMaxWidth()
                         .background(ClickGuiColors.settingBgColor)
@@ -206,9 +219,7 @@ class ClickGuiWindow(val x: Int, val y: Int, val category: Category, val width: 
                         .animateEnterExit()
                 ) {
                     module.settings.filter { it.isVisible() }.forEach { setting ->
-                        item {
-                            SettingItem(setting, module)
-                        }
+                        SettingItem(setting, module)
                     }
                 }
             }

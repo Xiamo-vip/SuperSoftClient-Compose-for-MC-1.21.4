@@ -3,6 +3,7 @@ package com.xiamo.module.modules.render
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -24,8 +25,11 @@ import com.xiamo.module.Category
 import com.xiamo.module.Module
 import com.xiamo.notification.NotificationManager
 import com.xiamo.notification.Notify
+import kotlinx.coroutines.delay
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.network.PlayerListEntry
+import net.minecraft.scoreboard.ScoreboardDisplaySlot
+import net.minecraft.scoreboard.ScoreboardEntry
 import net.minecraft.text.MutableText
 import net.minecraft.text.Style
 import net.minecraft.text.Text
@@ -43,7 +47,6 @@ object PlayerList : Module("PlayerList", "Show online players", Category.Render)
     override fun onKey(keyCode: Int, keyState: Int) {
         val options = MinecraftClient.getInstance().options
         if (options == null) return
-
         if (keyCode == options.playerListKey.defaultKey.code) {
             if (keyState == GLFW.GLFW_PRESS) {
                 DynamicIsland.color.value = DynamicIsland.color.value.copy(alpha = 0.6f)
@@ -68,32 +71,39 @@ object PlayerList : Module("PlayerList", "Show online players", Category.Render)
     @Composable
     fun PlayerListContent() {
         val client = MinecraftClient.getInstance()
-        if (client.world == null || client.player == null) return
-
-        val entries = remember(client.networkHandler?.listedPlayerListEntries) {
-            client.networkHandler?.listedPlayerListEntries
-                ?.sortedWith(
-                    compareBy<PlayerListEntry> { if (it.gameMode == GameMode.SPECTATOR) 1 else 0 }
-                        .thenBy { it.scoreboardTeam?.name ?: "" }
-                        .thenBy { it.profile.name }
-                ) ?: emptyList()
+        val handler = client.networkHandler ?: return
+        val entries by remember(handler) {
+            derivedStateOf {
+                handler.listedPlayerListEntries
+                    .sortedWith(
+                        compareBy<PlayerListEntry> { if (it.gameMode == GameMode.SPECTATOR) 1 else 0 }
+                            .thenBy { it.scoreboardTeam?.name ?: "" }
+                            .thenBy { it.profile.name }
+                    )
+            }
         }
 
-        if (entries.isEmpty()) return
-
-        FlowColumn(
-            modifier = Modifier,
-            maxItemsInEachColumn = 20,
-        ) {
+        FlowColumn(maxItemsInEachColumn = 20) {
             for (entry in entries) {
-                PlayerEntryItem(entry)
+                key(entry.profile.id) {
+                    PlayerEntryItem(entry)
+                }
             }
         }
     }
 
     @Composable
     fun PlayerEntryItem(entry: PlayerListEntry) {
-        val displayNameText = remember(entry) {
+
+
+        val tick by produceState(0) {
+            while(true) {
+                delay(1000)
+                value++
+            }
+        }
+
+        val displayNameText = remember(entry, tick) {
             getPlayerName(entry)
         }
 
@@ -103,7 +113,7 @@ object PlayerList : Module("PlayerList", "Show online players", Category.Render)
                 fontSize = fontSize.value.sp,
                 modifier = Modifier.padding(horizontal = 2.dp)
             )
-            Canvas(modifier = Modifier){
+            Canvas(modifier = Modifier.size(width = 10.dp, height = 8.dp)){
                 drawRect(Color.Green,size = Size(1.dp.toPx(),1.dp.toPx()),topLeft = Offset(1.dp.toPx(), 7.dp.toPx()))
                 if (entry.latency > 1000) return@Canvas
                 drawRect(Color.Green,size = Size(1.dp.toPx(),2.dp.toPx()),topLeft = Offset(2.5.dp.toPx(), 6.dp.toPx()))
@@ -117,6 +127,7 @@ object PlayerList : Module("PlayerList", "Show online players", Category.Render)
         }
 
     }
+
 
     private fun getPlayerName(entry: PlayerListEntry): Text {
         return if (entry.displayName != null) {
