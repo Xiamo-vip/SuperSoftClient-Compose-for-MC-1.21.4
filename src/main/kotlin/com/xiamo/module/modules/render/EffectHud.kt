@@ -28,6 +28,7 @@ import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.RenderEffect
 import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -62,7 +63,7 @@ object EffectHud : ComposeModule("EffectHud","效果显示") {
                             .padding(2.dp)
                             .width(90.dp)
                             .height(30.dp)
-                            .background(color = Color.Black.copy(alpha = 0.6f),shape = RoundedCornerShape(30))
+                            .background(color = Color.Black.copy(alpha = 0.6f),shape = RoundedCornerShape(25))
                             .padding(horizontal = 10.dp)
                             ,verticalAlignment = Alignment.CenterVertically)
                         {
@@ -82,7 +83,11 @@ object EffectHud : ComposeModule("EffectHud","效果显示") {
 
                                 val fontColor = if (status?.effectType?.value()?.isBeneficial == true) Color.White else Color.Red
 
-                                Text(Text.translatable(status?.translationKey).string.plus(" ").plus(level), fontSize = 7.sp, color = fontColor,
+                                Text(Text.translatable(status?.translationKey).string.plus(" ").plus(level),
+                                    fontSize = 7.sp,
+                                    color = fontColor,
+                                    fontWeight = FontWeight.Normal,
+                                    letterSpacing = 0.25.sp,
                                     textAlign = TextAlign.Center,
                                 )
 

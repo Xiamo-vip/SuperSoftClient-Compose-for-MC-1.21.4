@@ -1,10 +1,15 @@
 package com.xiamo.module.modules.render
 
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
@@ -92,11 +97,25 @@ object PlayerList : Module("PlayerList", "Show online players", Category.Render)
             getPlayerName(entry)
         }
 
-        Text(
-            text = displayNameText.toAnnotatedString(),
-            fontSize = fontSize.value.sp,
-            modifier = Modifier.padding(horizontal = 2.dp)
-        )
+        Row {
+            Text(
+                text = displayNameText.toAnnotatedString(),
+                fontSize = fontSize.value.sp,
+                modifier = Modifier.padding(horizontal = 2.dp)
+            )
+            Canvas(modifier = Modifier){
+                drawRect(Color.Green,size = Size(1.dp.toPx(),1.dp.toPx()),topLeft = Offset(1.dp.toPx(), 7.dp.toPx()))
+                if (entry.latency > 1000) return@Canvas
+                drawRect(Color.Green,size = Size(1.dp.toPx(),2.dp.toPx()),topLeft = Offset(2.5.dp.toPx(), 6.dp.toPx()))
+                if (entry.latency > 600) return@Canvas
+                drawRect(Color.Green,size = Size(1.dp.toPx(),3.dp.toPx()),topLeft = Offset(4.dp.toPx(), 5.dp.toPx()))
+                if (entry.latency > 300) return@Canvas
+                drawRect(Color.Green,size = Size(1.dp.toPx(),4.dp.toPx()),topLeft = Offset(5.5.dp.toPx(), 4.dp.toPx()))
+                if (entry.latency > 150) return@Canvas
+                drawRect(Color.Green,size = Size(1.dp.toPx(),5.dp.toPx()),topLeft = Offset(7.dp.toPx(), 3.dp.toPx()))
+            }
+        }
+
     }
 
     private fun getPlayerName(entry: PlayerListEntry): Text {
