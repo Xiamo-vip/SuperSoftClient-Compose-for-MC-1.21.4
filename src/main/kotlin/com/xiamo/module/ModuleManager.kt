@@ -3,6 +3,7 @@ package com.xiamo.module
 import com.xiamo.SuperSoft
 import com.xiamo.module.modules.combat.KillAura
 import com.xiamo.module.modules.misc.MusicPlayer
+import com.xiamo.module.modules.movement.InventoryMove
 import com.xiamo.module.modules.movement.Speed
 import com.xiamo.module.modules.movement.Sprint
 import com.xiamo.module.modules.player.ChestStealer
@@ -40,6 +41,7 @@ object ModuleManager {
         modules.add(ChestStealer)
         modules.add(PlayerList)
         modules.add(ScoreBoard)
+        modules.add(InventoryMove)
         modules.add(DynamicIsland)
 
 

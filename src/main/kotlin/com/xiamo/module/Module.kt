@@ -103,7 +103,7 @@ open class Module(val name: String, val description: String, val category: Categ
         this.enabled = true
         ConfigManager.saveModule(this)
     }
-    open fun onKey(keyCode: Int,keyState: Int) {}
+    open fun onKey(keyCode: Int,keyState: Int,scanCode: Int) {}
     open fun disable() {
         NotificationManager.notifies.add(Notify(this.name, "Toggled", 600L, {
             Row(

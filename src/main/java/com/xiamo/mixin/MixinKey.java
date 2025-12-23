@@ -15,6 +15,6 @@ public class MixinKey {
 
     @Inject(method = "onKey",at=@At("HEAD"))
     private void hookKey(long window, int key, int scancode, int action, int modifiers, CallbackInfo ci){
-        new KeyBoardEvent(key,action).broadcast();
+        new KeyBoardEvent(key,action,scancode).broadcast();
     }
 }

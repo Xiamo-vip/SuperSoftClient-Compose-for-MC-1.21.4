@@ -180,7 +180,7 @@ object KeyboradHud : ComposeModule("KeyboradHud","键盘可视化") {
     }
 
 
-    override fun onKey(keyCode: Int, keyState: Int) {
+    override fun onKey(keyCode: Int, keyState: Int,scanCode: Int) {
         if (keyCode == MinecraftClient.getInstance().options.forwardKey.defaultKey.code) {
             if (keyState == 1 || keyState == 2) {
                 forwardKeyIsPressed.value = true

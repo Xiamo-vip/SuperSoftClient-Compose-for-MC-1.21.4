@@ -158,7 +158,7 @@ open class ComposeModule(name : String, description : String) : Module(name,desc
     open fun renderCompose(){
     }
 
-    override fun onKey(keyCode: Int, keyState: Int) {
+    override fun onKey(keyCode: Int, keyState: Int,scanCode: Int) {
         if (keyState == GLFW.GLFW_PRESS){
             val event = AWTUtils.KeyEvent(
                 KeyEvent.KEY_PRESSED,
@@ -187,7 +187,7 @@ open class ComposeModule(name : String, description : String) : Module(name,desc
         }
 
 
-        super.onKey(keyCode, keyState)
+        super.onKey(keyCode, keyState,scanCode)
     }
 
     fun saveComponentPositions(positions: Map<String, Pair<Float, Float>>) {

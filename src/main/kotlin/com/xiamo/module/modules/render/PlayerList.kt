@@ -44,7 +44,7 @@ object PlayerList : Module("PlayerList", "Show online players", Category.Render)
         this.enabled = true
     }
 
-    override fun onKey(keyCode: Int, keyState: Int) {
+    override fun onKey(keyCode: Int, keyState: Int,scanCode : Int) {
         val options = MinecraftClient.getInstance().options
         if (options == null) return
         if (keyCode == options.playerListKey.defaultKey.code) {
@@ -65,7 +65,7 @@ object PlayerList : Module("PlayerList", "Show online players", Category.Render)
                 }
             }
         }
-        super.onKey(keyCode, keyState)
+        super.onKey(keyCode, keyState,scanCode)
     }
 
     @Composable

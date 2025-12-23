@@ -26,7 +26,7 @@ class MouseReleasedEvent(val mouseX : Int,val mouseY : Int): Event(){}
 
 
 
-class KeyBoardEvent(val key : Int,val action : Int): Event(){}
+class KeyBoardEvent(val key : Int,val action : Int,val scanCode : Int): Event(){}
 class TickEvent(): Event(){}
 
 class NavigateEvent(val screen : Screen): Event(){}
