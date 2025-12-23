@@ -220,7 +220,7 @@ object KeyboradHud : ComposeModule("KeyboardHud", "键盘可视化") {
         pColor: Color,
         customWidth: Dp? = null
     ) {
-        val animDuration = 200
+        val animDuration = 300
 
         val backgroundColor by animateColorAsState(
             targetValue = when {

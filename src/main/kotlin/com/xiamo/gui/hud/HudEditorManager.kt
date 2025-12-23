@@ -6,7 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.xiamo.module.ComposeModule
 import com.xiamo.module.ModuleManager
-import com.xiamo.utils.config.ConfigManager
+
 
 data class ComponentPositionData(val x: Float, val y: Float, val scale: Float)
 
@@ -47,7 +47,7 @@ object HudEditorManager {
 
     fun onScroll(delta: Double) {
         if (isEditMode && selectedComponent != null) {
-            selectedComponent?.adjustScale(delta.toFloat() * 0.1f)
+            selectedComponent?.adjustScale(delta.toFloat() * 0.05f)
         }
     }
 
@@ -60,8 +60,8 @@ object HudEditorManager {
         }
 
         positionsMap.forEach { (moduleName, positions) ->
-            com.xiamo.module.ModuleManager.modules.find { it.name == moduleName }?.let { module ->
-                if (module is com.xiamo.module.ComposeModule) {
+            ModuleManager.modules.find { it.name == moduleName }?.let { module ->
+                if (module is ComposeModule) {
                     module.saveComponentPositions(positions)
                 }
             }
@@ -69,8 +69,8 @@ object HudEditorManager {
     }
 
     fun loadComponentPosition(componentId: String, moduleName: String, defaultX: Float, defaultY: Float, defaultScale: Float = 1f): ComponentPositionData {
-        val module = com.xiamo.module.ModuleManager.modules.find { it.name == moduleName }
-        if (module is com.xiamo.module.ComposeModule) {
+        val module = ModuleManager.modules.find { it.name == moduleName }
+        if (module is ComposeModule) {
             return module.loadComponentPosition(componentId, defaultX, defaultY, defaultScale)
         }
         return ComponentPositionData(defaultX, defaultY, defaultScale)

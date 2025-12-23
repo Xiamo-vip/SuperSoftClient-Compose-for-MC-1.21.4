@@ -15,7 +15,6 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.graphics.drawscope.DrawScope
-import androidx.compose.ui.graphics.drawscope.DrawStyle
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.TextStyle
@@ -24,11 +23,8 @@ import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.sp
 import com.xiamo.module.ComposeModule
 import net.minecraft.client.MinecraftClient
-import net.minecraft.command.argument.EntityArgumentType.entity
-import net.minecraft.entity.Entity
 import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.mob.HostileEntity
-import net.minecraft.entity.mob.MobEntity
 import net.minecraft.entity.passive.PassiveEntity
 import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.util.math.Vec3d
@@ -37,14 +33,14 @@ import org.joml.Vector3f
 import kotlin.math.tan
 
 object NameTags : ComposeModule("NameTags", "NameTags") {
-    val distanceSetting = numberSetting("Distance", "Distance", 100.0, 1.0, 250.0, 1.0)
-    val enemyEntity = booleanSetting("Enemy","Render Mob",true)
-    val playerEntity = booleanSetting("Player","Render Player",true)
-    val passiveEntity = booleanSetting("Passive","Render Entity",true)
-    val neutralEntity = booleanSetting("Neutral","Render Entity",true)
-    val fontSize = numberSetting("FontSize", "FontSize", 10.0, 1.0, 30.0, 1.0)
-    val backgroundColor = colorSetting("BackgroundColor","BackgroundColor",Color.Black.copy(0.75f).toArgb())
-    val textColor = colorSetting("TextColor","TextColor",Color.White.toArgb())
+    val distanceSetting = numberSetting("Distance", "渲染距离", 100.0, 1.0, 250.0, 1.0)
+    val enemyEntity = booleanSetting("Enemy","渲染敌人",true)
+    val playerEntity = booleanSetting("Player","渲染玩家",true)
+    val passiveEntity = booleanSetting("Passive","渲染友好实体",true)
+    val neutralEntity = booleanSetting("Neutral","渲染自然实体",true)
+    val fontSize = numberSetting("FontSize", "文字大小", 10.0, 1.0, 30.0, 1.0)
+    val backgroundColor = colorSetting("BackgroundColor","背景颜色",Color.Black.copy(0.75f).toArgb())
+    val textColor = colorSetting("TextColor","文本颜色",Color.White.toArgb())
     @Composable
     override fun renderCompose() {
         val textMeasurer: TextMeasurer = rememberTextMeasurer()
@@ -145,7 +141,7 @@ object NameTags : ComposeModule("NameTags", "NameTags") {
             drawRoundRect(Color(backgroundColor.value)
                 , topLeft = Offset(screenPos.x - rectWidth / 2,
                     screenPos.y - rectHeight /2),
-                size = Size(rectWidth.toFloat(), rectHeight.toFloat()),
+                size = Size(rectWidth, rectHeight),
                 cornerRadius = CornerRadius(15.0f),
             )
             drawText(

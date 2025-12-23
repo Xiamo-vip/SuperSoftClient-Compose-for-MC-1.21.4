@@ -18,6 +18,7 @@ import com.xiamo.module.modules.render.Lyric
 import com.xiamo.module.modules.render.NameTags
 import com.xiamo.module.modules.render.PlayerList
 import com.xiamo.module.modules.render.ScoreBoard
+import com.xiamo.module.modules.render.SmoothCamera
 import java.util.concurrent.CopyOnWriteArrayList
 
 object ModuleManager {
@@ -43,6 +44,7 @@ object ModuleManager {
         modules.add(ScoreBoard)
         modules.add(InventoryMove)
         modules.add(DynamicIsland)
+        modules.add(SmoothCamera)
 
 
 

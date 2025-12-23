@@ -1,14 +1,11 @@
 package com.xiamo.module.modules.render
 
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
@@ -29,8 +26,6 @@ import com.xiamo.notification.Notify
 import kotlinx.coroutines.delay
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.network.PlayerListEntry
-import net.minecraft.scoreboard.ScoreboardDisplaySlot
-import net.minecraft.scoreboard.ScoreboardEntry
 import net.minecraft.text.MutableText
 import net.minecraft.text.Style
 import net.minecraft.text.Text
@@ -39,7 +34,7 @@ import net.minecraft.world.GameMode
 import org.lwjgl.glfw.GLFW
 
 object PlayerList : Module("PlayerList", "Show online players", Category.Render) {
-    val fontSize = numberSetting("FontSize", "fontSize",4.0,1.0,10.0)
+    val fontSize = numberSetting("FontSize", "文字大小",4.0,1.0,10.0)
 
     init {
         this.enabled = true

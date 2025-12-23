@@ -3,13 +3,8 @@ package com.xiamo.gui.clickGui
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.animate
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.animateValueAsState
-import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
@@ -19,7 +14,6 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.*
@@ -29,25 +23,19 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.PointerEventType
-import androidx.compose.ui.input.pointer.isSecondaryPressed
 import androidx.compose.ui.input.pointer.onPointerEvent
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.semantics.role
-import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.state.ToggleableState
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -75,6 +63,10 @@ object ClickGuiColors {
 }
 
 class ClickGuiWindow(val x: Int, val y: Int, val category: Category, val width: Float, val height: Float) {
+
+    companion object {
+        var listeningModule: Module? by mutableStateOf(null)
+    }
 
     var windowX by mutableStateOf(x.toFloat())
     var windowY by mutableStateOf(y.toFloat())
@@ -163,8 +155,6 @@ class ClickGuiWindow(val x: Int, val y: Int, val category: Category, val width: 
             animationSpec = tween(durationMillis = 200)
         )
 
-        val hasSettings = module.settings.isNotEmpty()
-
         Column(modifier = Modifier.fillMaxWidth()) {
             Row(
                 modifier = Modifier
@@ -175,9 +165,7 @@ class ClickGuiWindow(val x: Int, val y: Int, val category: Category, val width: 
                         indication = ripple(true, 200.dp, Color.DarkGray),
                         onClick = { module.toggle() },
                         onLongClick = {
-                            if (hasSettings) {
-                                module.settingsExpanded = !module.settingsExpanded
-                            }
+                            module.settingsExpanded = !module.settingsExpanded
                         },
                     )
                     .hoverable(interactionSource)
@@ -193,20 +181,18 @@ class ClickGuiWindow(val x: Int, val y: Int, val category: Category, val width: 
                     modifier = Modifier.weight(1f)
                 )
 
-                if (hasSettings) {
-                    Text(
-                        text = "▶",
-                        fontSize = 6.sp,
-                        color = ClickGuiColors.textColor.copy(alpha = 0.7f),
-                        modifier = Modifier
-                            .rotate(arrowRotation)
-                            .clickable { module.settingsExpanded = !module.settingsExpanded }
-                    )
-                }
+                Text(
+                    text = "▶",
+                    fontSize = 6.sp,
+                    color = ClickGuiColors.textColor.copy(alpha = 0.7f),
+                    modifier = Modifier
+                        .rotate(arrowRotation)
+                        .clickable { module.settingsExpanded = !module.settingsExpanded }
+                )
             }
 
             AnimatedVisibility(
-                visible = module.settingsExpanded && hasSettings,
+                visible = module.settingsExpanded,
                 enter = expandVertically(),
                 exit = shrinkVertically()
             ) {
@@ -221,6 +207,7 @@ class ClickGuiWindow(val x: Int, val y: Int, val category: Category, val width: 
                     module.settings.filter { it.isVisible() }.forEach { setting ->
                         SettingItem(setting, module)
                     }
+                    ModuleKeyBindItem(module)
                 }
             }
         }
@@ -251,7 +238,6 @@ class ClickGuiWindow(val x: Int, val y: Int, val category: Category, val width: 
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(15.dp)
                 .background(ClickGuiColors.settingHoverColor.copy(alpha = bgAlpha))
                 .hoverable(interactionSource)
                 .clickable {
@@ -262,11 +248,20 @@ class ClickGuiWindow(val x: Int, val y: Int, val category: Category, val width: 
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
-                text = setting.name,
-                fontSize = settingFont,
-                color = ClickGuiColors.textSecondaryColor
-            )
+            Column {
+                Text(
+                    text = setting.name,
+                    fontSize = settingFont,
+                    color = ClickGuiColors.textSecondaryColor
+                )
+                Text(
+                    text = setting.description,
+                    fontSize = (settingFont.value - 2).sp,
+                    color = ClickGuiColors.textSecondaryColor.copy(alpha = 0.5f),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
 
             CustomSwitch(
                 checked = setting.value,
@@ -304,11 +299,20 @@ class ClickGuiWindow(val x: Int, val y: Int, val category: Category, val width: 
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Text(
-                    text = setting.name,
-                    fontSize = settingFont,
-                    color = ClickGuiColors.textSecondaryColor
-                )
+                Column {
+                    Text(
+                        text = setting.name,
+                        fontSize = settingFont,
+                        color = ClickGuiColors.textSecondaryColor
+                    )
+                    Text(
+                        text = setting.description,
+                        fontSize = (settingFont.value - 2).sp,
+                        color = ClickGuiColors.textSecondaryColor.copy(alpha = 0.5f),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
                 Text(
                     text = "%.2f".format(setting.value),
                     fontSize = settingFont,
@@ -357,11 +361,20 @@ class ClickGuiWindow(val x: Int, val y: Int, val category: Category, val width: 
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = setting.name,
-                    fontSize = settingFont,
-                    color = ClickGuiColors.textSecondaryColor
-                )
+                Column {
+                    Text(
+                        text = setting.name,
+                        fontSize = settingFont,
+                        color = ClickGuiColors.textSecondaryColor
+                    )
+                    Text(
+                        text = setting.description,
+                        fontSize = (settingFont.value - 2).sp,
+                        color = ClickGuiColors.textSecondaryColor.copy(alpha = 0.5f),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
                         text = setting.value,
@@ -446,11 +459,20 @@ class ClickGuiWindow(val x: Int, val y: Int, val category: Category, val width: 
                 .hoverable(interactionSource)
                 .padding(vertical = 2.dp, horizontal = 4.dp)
         ) {
-            Text(
-                text = setting.name,
-                fontSize = settingFont,
-                color = ClickGuiColors.textSecondaryColor
-            )
+            Column {
+                Text(
+                    text = setting.name,
+                    fontSize = settingFont,
+                    color = ClickGuiColors.textSecondaryColor
+                )
+                Text(
+                    text = setting.description,
+                    fontSize = (settingFont.value - 2).sp,
+                    color = ClickGuiColors.textSecondaryColor.copy(alpha = 0.5f),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+            }
             StringTextField(
                 value = setting.value,
                 onValueChange = {
@@ -500,11 +522,20 @@ class ClickGuiWindow(val x: Int, val y: Int, val category: Category, val width: 
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = setting.name,
-                    fontSize = settingFont,
-                    color = ClickGuiColors.textSecondaryColor
-                )
+                Column {
+                    Text(
+                        text = setting.name,
+                        fontSize = settingFont,
+                        color = ClickGuiColors.textSecondaryColor
+                    )
+                    Text(
+                        text = setting.description,
+                        fontSize = (settingFont.value - 2).sp,
+                        color = ClickGuiColors.textSecondaryColor.copy(alpha = 0.5f),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Box(
                         modifier = Modifier
@@ -687,6 +718,54 @@ class ClickGuiWindow(val x: Int, val y: Int, val category: Category, val width: 
             -1 -> "None"
             else -> org.lwjgl.glfw.GLFW.glfwGetKeyName(keyCode, 0) ?: "Key$keyCode"
         }
+    }
+
+    @Composable
+    private fun ModuleKeyBindItem(module: Module) {
+        val interactionSource = remember { MutableInteractionSource() }
+        val isHovered by interactionSource.collectIsHoveredAsState()
+        val isListening = listeningModule == module
+
+        val bgAlpha by animateFloatAsState(
+            targetValue = if (isHovered) 1f else 0f,
+            animationSpec = tween(durationMillis = 150)
+        )
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(ClickGuiColors.settingHoverColor.copy(alpha = bgAlpha))
+                .hoverable(interactionSource)
+                .clickable {
+                    listeningModule = if (isListening) null else module
+                }
+                .padding(vertical = 2.dp, horizontal = 4.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "KeyBind",
+                fontSize = settingFont,
+                color = ClickGuiColors.textSecondaryColor
+            )
+            Text(
+                text = if (isListening) "..." else getKeyName(module.key),
+                fontSize = settingFont,
+                color = if (isListening) Color.Yellow else ClickGuiColors.accentColor
+            )
+        }
+    }
+
+    fun onKeyPressed(keyCode: Int): Boolean {
+        val module = listeningModule ?: return false
+        if (keyCode == org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE) {
+            module.key = -1
+        } else {
+            module.key = keyCode
+        }
+        listeningModule = null
+        com.xiamo.utils.config.ConfigManager.saveModule(module)
+        return true
     }
 
     fun onDragged(mouseX: Int, mouseY: Int) {

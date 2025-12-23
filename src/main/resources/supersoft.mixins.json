@@ -13,6 +13,7 @@
     "requireAnnotations": true
   },
   "client": [
+    "MixinCamera",
     "MixinClientEntity",
     "MixinClientPlayerEntity",
     "MixinEntity",

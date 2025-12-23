@@ -189,6 +189,10 @@ class ClickGuiScreen(val parentScreen: Screen? = null) : ComposeScreen(Text.of("
     }
 
     override fun keyPressed(keyCode: Int, scanCode: Int, modifiers: Int): Boolean {
+        if (ClickGuiWindow.listeningModule != null) {
+            categories.firstOrNull()?.onKeyPressed(keyCode)
+            return true
+        }
         if (keyCode == 256) {
             if (HudEditorManager.isEditMode) {
                 HudEditorManager.toggleEditMode()

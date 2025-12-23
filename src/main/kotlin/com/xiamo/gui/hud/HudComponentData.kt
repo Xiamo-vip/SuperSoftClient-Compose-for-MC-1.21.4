@@ -17,12 +17,14 @@ class HudComponentData(
     var y by mutableStateOf(initialY)
     var scale by mutableStateOf(initialScale)
 
-    var width by mutableStateOf(0f)
-    var height by mutableStateOf(0f)
+    var baseWidth by mutableStateOf(0f)
+    var baseHeight by mutableStateOf(0f)
+
+    val width: Float get() = baseWidth * scale
+    val height: Float get() = baseHeight * scale
 
     var isVisible by mutableStateOf(true)
     var isDragging = false
-    var isResizing = false
 
     private var dragOffsetX = 0f
     private var dragOffsetY = 0f
@@ -49,15 +51,19 @@ class HudComponentData(
     }
 
     fun adjustScale(delta: Float) {
-        scale = (scale + delta).coerceIn(0.5f, 2.0f)
+        val newScale = scale + delta
+        scale = (kotlin.math.round(newScale * 20f) / 20f).coerceIn(0.5f, 2.0f)
+    }
+
+    fun resetScale() {
+        scale = 1.0f
     }
 
     fun isMouseOver(mouseX: Double, mouseY: Double, windowScale: Double): Boolean {
-        if (!isVisible || width <= 0 || height <= 0) return false
+        if (!isVisible || baseWidth <= 0 || baseHeight <= 0) return false
 
         val physX = mouseX * windowScale
         val physY = mouseY * windowScale
-
 
         return physX >= x && physX <= x + width &&
                 physY >= y && physY <= y + height
