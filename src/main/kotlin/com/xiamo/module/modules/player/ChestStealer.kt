@@ -39,6 +39,7 @@ import net.minecraft.client.gui.screen.ingame.InventoryScreen
 import net.minecraft.component.DataComponentTypes
 import net.minecraft.item.ItemStack
 import net.minecraft.network.packet.c2s.play.ClickSlotC2SPacket
+import net.minecraft.network.packet.s2c.play.OpenScreenS2CPacket
 import net.minecraft.screen.ScreenHandlerType
 import net.minecraft.screen.slot.Slot
 import net.minecraft.screen.slot.SlotActionType
@@ -62,6 +63,7 @@ object ChestStealer : Module("ChestStealer","", Category.Player) {
                 hide = true
                 stealer()
             }
+        } else {
 
         }
 

@@ -6,10 +6,24 @@ import it.unimi.dsi.fastutil.objects.Reference2BooleanArrayMap
 import net.minecraft.client.MinecraftClient
 import net.minecraft.client.gui.screen.ChatScreen
 import net.minecraft.client.option.KeyBinding
+import net.minecraft.network.packet.c2s.play.CloseHandledScreenC2SPacket
 import org.lwjgl.glfw.GLFW
 
 object InventoryMove : Module("Inventory Move","Inventory Move", Category.Movement) {
 
+
+    override fun onTick() {
+        val mc = MinecraftClient.getInstance()
+        if (!enabled || mc.currentScreen == null || mc.currentScreen is ChatScreen) return
+        val options = mc.options
+        val keys = listOf(options.forwardKey, options.backKey, options.leftKey, options.rightKey, options.jumpKey,options.sneakKey)
+        for (key in keys) {
+            val code = key.defaultKey.code
+            if (net.minecraft.client.util.InputUtil.isKeyPressed(mc.window.handle, code)) {
+                key.isPressed = true
+            }
+        }
+    }
 
 
 
@@ -48,7 +62,6 @@ object InventoryMove : Module("Inventory Move","Inventory Move", Category.Moveme
         val screen = MinecraftClient.getInstance().currentScreen ?: return false
         if (MinecraftClient.getInstance().world == null)return false
         if (screen is ChatScreen) return false
-        if (keyCode == MinecraftClient.getInstance().options.sneakKey.defaultKey.code) return false
         return true
 
     }
