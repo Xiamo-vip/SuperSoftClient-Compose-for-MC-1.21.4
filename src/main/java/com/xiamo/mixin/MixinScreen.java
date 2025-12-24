@@ -44,13 +44,11 @@ public class MixinScreen {
     @Redirect(method = "setScreen",at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Mouse;unlockCursor()V"))
     private void unlockCursor(Mouse instance){
         if (MinecraftClient.getInstance().world != null) {
-            if (!ChestStealer.INSTANCE.getHide()) {
+            if (!(ChestStealer.INSTANCE.getHide() && ChestStealer.INSTANCE.getEnabled() && ChestStealer.INSTANCE.isSilence().getValue())){
                 instance.unlockCursor();
             }
 
-            if (ChestStealer.INSTANCE.isChestScreen() && !ChestStealer.INSTANCE.isSilence().getValue()){
-                instance.unlockCursor();
-            }
+
 
         }
     }

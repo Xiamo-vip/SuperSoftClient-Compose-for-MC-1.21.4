@@ -50,7 +50,6 @@ import java.util.concurrent.CopyOnWriteArrayList
 object ChestStealer : Module("ChestStealer","", Category.Player) {
 
     val isSilence  = booleanSetting("isSilence","isSilence",true)
-    val isAutoClose = booleanSetting("isAutoClose","isAutoClose",true)
     var isStealing = false
     var hide = false
 
@@ -92,7 +91,7 @@ object ChestStealer : Module("ChestStealer","", Category.Player) {
                             clickSlot(screen.screenHandler.syncId,s.index,0,SlotActionType.QUICK_MOVE)
                             //screen.screenHandler.onSlotClick(s.index,0, SlotActionType.PICKUP,player)
                     }.apply {
-                            if (isAutoClose.value){
+                            if (true){
                                 MinecraftClient.getInstance().execute {
                                     player?.closeHandledScreen()
                                 }

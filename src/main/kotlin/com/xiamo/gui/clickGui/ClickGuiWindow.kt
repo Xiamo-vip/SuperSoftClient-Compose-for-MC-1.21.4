@@ -204,10 +204,11 @@ class ClickGuiWindow(val x: Int, val y: Int, val category: Category, val width: 
                         .animateContentSize()
                         .animateEnterExit()
                 ) {
+                    ModuleKeyBindItem(module)
                     module.settings.filter { it.isVisible() }.forEach { setting ->
                         SettingItem(setting, module)
                     }
-                    ModuleKeyBindItem(module)
+
                 }
             }
         }
