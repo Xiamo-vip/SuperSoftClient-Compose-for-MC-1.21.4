@@ -5,6 +5,9 @@
 > 用的音乐API项目 ： https://neteasecloudmusicapienhanced.js.org/#/
 >
 > 有没有Contributor  /(ㄒoㄒ)/~~
+>
+> 注册灵动岛请实例化Notify用NotificationManager注册，长时间保持请把time设为-1后续手动从notifies中删除
+> registerPermanent()是灵动岛没有Notify下的常驻栏组件
 
 <img width="2559" height="1494" alt="3363b3d496f331a3f5357668fcc417cc" src="https://github.com/user-attachments/assets/02c4ebfa-81bf-4f92-931c-d5592ec5e8a4" />
 <img width="2559" height="1494" alt="b0f3856490cb153cffc59a1a21a533ae" src="https://github.com/user-attachments/assets/d8c8a90b-5c12-4973-987c-966b68dad27e" />
