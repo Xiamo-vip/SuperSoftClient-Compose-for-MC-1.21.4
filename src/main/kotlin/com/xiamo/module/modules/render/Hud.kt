@@ -41,6 +41,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
@@ -49,79 +50,47 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
+import com.xiamo.gui.hud.HudComponent
 import com.xiamo.gui.hud.HudEditorManager
 import com.xiamo.module.ComposeModule
 import com.xiamo.module.ModuleManager
 import com.xiamo.module.modules.combat.KillAura
-import com.xiamo.setting.BooleanSetting
-import com.xiamo.setting.ColorSetting
 import com.xiamo.setting.ModeSetting
-import com.xiamo.setting.NumberSetting
-import com.xiamo.setting.StringSetting
 import net.minecraft.client.MinecraftClient
 import kotlin.math.sin
-import kotlin.random.Random
 
 object Hud : ComposeModule("Hud", "界面") {
-    var title = StringSetting("Title", "HUD标题", "SuperSoft")
+    var title = stringSetting("Title", "HUD标题", "SuperSoft")
+
+    val fontSize = numberSetting("FontSize","字体大小",8.0,1.0,15.0)
+    val scale = numberSetting("Scale","缩放",1.0,0.1,5.0)
+    val colorMode = modeSetting("ColorMode", "颜色模式", "Rainbow", "Rainbow", "Static", "Fade", "Gradient", "Wave")
 
 
-    val colorMode = ModeSetting("ColorMode", "颜色模式", "Rainbow", listOf("Rainbow", "Static", "Fade", "Gradient", "Wave"))
+    val rainbowSpeed = numberSetting("RainbowSpeed", "彩虹速度", 3.0, 0.5, 10.0, 0.5)
+    val rainbowSaturation = numberSetting("RainbowSaturation", "彩虹饱和度", 0.6, 0.1, 1.0, 0.05)
+    val rainbowBrightness = numberSetting("RainbowBrightness", "彩虹亮度", 1.0, 0.3, 1.0, 0.05)
+    val rainbowOffset = numberSetting("RainbowOffset", "彩虹偏移", 0.05, 0.01, 0.2, 0.01)
 
 
-    val rainbowSpeed = NumberSetting("RainbowSpeed", "彩虹速度", 3.0, 0.5, 10.0, 0.5)
-    val rainbowSaturation = NumberSetting("RainbowSaturation", "彩虹饱和度", 0.6, 0.1, 1.0, 0.05)
-    val rainbowBrightness = NumberSetting("RainbowBrightness", "彩虹亮度", 1.0, 0.3, 1.0, 0.05)
-    val rainbowOffset = NumberSetting("RainbowOffset", "彩虹偏移", 0.05, 0.01, 0.2, 0.01)
+    val staticColor = colorSetting("StaticColor", "静态颜色", 0xFF6C63FF.toInt())
 
 
-    val staticColor = ColorSetting("StaticColor", "静态颜色", 0xFF6C63FF.toInt())
+    val gradientStartColor = colorSetting("GradientStart", "渐变起始色", 0xFF6C63FF.toInt())
+    val gradientEndColor = colorSetting("GradientEnd", "渐变结束色", 0xFFFF6B6B.toInt())
 
 
-    val gradientStartColor = ColorSetting("GradientStart", "渐变起始色", 0xFF6C63FF.toInt())
-    val gradientEndColor = ColorSetting("GradientEnd", "渐变结束色", 0xFFFF6B6B.toInt())
+    val waveSpeed = numberSetting("WaveSpeed", "波浪速度", 2.0, 0.5, 5.0, 0.5)
+    val waveColor = colorSetting("WaveColor", "波浪颜色", 0xFF00BFFF.toInt())
 
 
-    val waveSpeed = NumberSetting("WaveSpeed", "波浪速度", 2.0, 0.5, 5.0, 0.5)
-    val waveColor = ColorSetting("WaveColor", "波浪颜色", 0xFF00BFFF.toInt())
+    val showBackground = booleanSetting("ShowBackground", "显示背景", true)
+    val backgroundOpacity = numberSetting("BackgroundOpacity", "背景透明度", 0.6, 0.0, 1.0, 0.1)
 
 
-    val showBackground = BooleanSetting("ShowBackground", "显示背景", true)
-    val backgroundOpacity = NumberSetting("BackgroundOpacity", "背景透明度", 0.6, 0.0, 1.0, 0.1)
 
     init {
         this.enabled = true
-        this.settings.add(title)
-        this.settings.add(colorMode)
-
-
-        rainbowSpeed.dependency = { colorMode.value == "Rainbow" }
-        rainbowSaturation.dependency = { colorMode.value == "Rainbow" }
-        rainbowBrightness.dependency = { colorMode.value == "Rainbow" }
-        rainbowOffset.dependency = { colorMode.value == "Rainbow" }
-        this.settings.add(rainbowSpeed)
-        this.settings.add(rainbowSaturation)
-        this.settings.add(rainbowBrightness)
-        this.settings.add(rainbowOffset)
-
-
-        staticColor.dependency = { colorMode.value == "Static" }
-        this.settings.add(staticColor)
-
-
-        gradientStartColor.dependency = { colorMode.value == "Gradient" }
-        gradientEndColor.dependency = { colorMode.value == "Gradient" }
-        this.settings.add(gradientStartColor)
-        this.settings.add(gradientEndColor)
-
-        waveSpeed.dependency = { colorMode.value == "Wave" }
-        waveColor.dependency = { colorMode.value == "Wave" }
-        this.settings.add(waveSpeed)
-        this.settings.add(waveColor)
-
-        this.settings.add(showBackground)
-        backgroundOpacity.dependency = { showBackground.value }
-        this.settings.add(backgroundOpacity)
     }
 
 
@@ -195,7 +164,7 @@ object Hud : ComposeModule("Hud", "界面") {
 
         Box(Modifier.fillMaxSize()) {
 
-            com.xiamo.gui.hud.HudComponent(
+            HudComponent(
                 componentId = "hud_title",
                 moduleName = "Hud",
                 defaultX = 5f,
@@ -217,16 +186,16 @@ object Hud : ComposeModule("Hud", "界面") {
             }
 
             Box(Modifier.fillMaxSize(), contentAlignment = Alignment.TopEnd) {
-                LazyColumn(horizontalAlignment = Alignment.End, modifier = Modifier.width(200.dp)) {
+                LazyColumn(horizontalAlignment = Alignment.End, modifier = Modifier.width(200.dp).scale(scale.value.toFloat())) {
                     val enabledModules = ModuleManager.modules.filter { it.enabled }.sortedByDescending { module ->
                         val mode = module.settings.filterIsInstance<ModeSetting>().firstOrNull()?.value
                         val displayName = if (mode != null) "${module.name} | $mode" else module.name
-                        textMeasurer.measure(displayName, style = TextStyle(textAlign = TextAlign.Right, fontSize = 8.sp)).size.width
+                        textMeasurer.measure(displayName, style = TextStyle(textAlign = TextAlign.Right, fontSize = fontSize.value.toFloat().sp)).size.width
                     }
 
                     itemsIndexed(enabledModules) { index, module ->
                         val moduleColor = getModuleColor(index, enabledModules.size, hueOffset, timeMs)
-                        val args = module.settings.filterIsInstance(ModeSetting::class.java).firstOrNull()?.value
+                        val args = module.settings.filterIsInstance<ModeSetting>().firstOrNull()?.value
 
                         val backgroundModifier = if (showBackground.value) {
                             Modifier.background(
@@ -239,7 +208,7 @@ object Hud : ComposeModule("Hud", "界面") {
 
                         Text(
                             text = module.name + (if (args == null) "" else " | $args"),
-                            fontSize = 8.sp,
+                            fontSize = fontSize.value.toFloat().sp,
                             color = moduleColor,
                             modifier = backgroundModifier
                                 .padding(horizontal = 4.dp, vertical = 2.dp)
@@ -266,7 +235,7 @@ object Hud : ComposeModule("Hud", "界面") {
                 if (KillAura.targetBarSetting.value || HudEditorManager.isEditMode) {
                     val target = KillAura.targetObject.value
                     if (target != null && !HudEditorManager.isEditMode) {
-                        com.xiamo.gui.hud.HudComponent(
+                        HudComponent(
                             componentId = "target_hud",
                             moduleName = "Hud",
                             defaultX = screenWidth / 2 + 100f,

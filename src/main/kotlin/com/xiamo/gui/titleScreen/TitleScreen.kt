@@ -2,7 +2,6 @@ package com.xiamo.gui.titleScreen
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
@@ -12,11 +11,7 @@ import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.hoverable
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -25,27 +20,20 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.decodeToImageBitmap
-import androidx.compose.ui.graphics.drawscope.translate
-import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -53,9 +41,7 @@ import com.xiamo.SuperSoft
 import com.xiamo.alt.AltManagerScreen
 import com.xiamo.gui.ComposeScreen
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import net.minecraft.client.MinecraftClient
-
 import net.minecraft.client.gui.screen.multiplayer.MultiplayerScreen
 import net.minecraft.client.gui.screen.option.OptionsScreen
 import net.minecraft.client.gui.screen.world.SelectWorldScreen
@@ -64,13 +50,14 @@ import kotlin.math.sqrt
 import kotlin.random.Random
 
 class TitleScreen : ComposeScreen(Text.of("Title Screen")) {
-    val particles = List(80) {
+    var particles = List(80) {
         Particle()
     }
     @Composable
     override fun renderCompose() {
         var isVisiable by remember { mutableStateOf(false) }
-        val scope = rememberCoroutineScope()
+        var lastWidth by remember { mutableStateOf(0) }
+        var lastHeight by remember { mutableStateOf(0) }
 
 //        val particles = remember { mutableStateListOf<Particle>().apply { repeat(100){ add(Particle(
 //            x1 = Random.nextFloat() * MinecraftClient.getInstance().window.width,
@@ -80,17 +67,24 @@ class TitleScreen : ComposeScreen(Text.of("Title Screen")) {
 
 
         Box(Modifier.fillMaxSize().background(Color(23,8,20))) {
-            var tick by remember { mutableStateOf(0) }
             LaunchedEffect(Unit) {
                 isVisiable = true
             }
             LaunchedEffect(Unit) {
+                lastWidth = MinecraftClient.getInstance().window.width
+                lastHeight = MinecraftClient.getInstance().window.height
                 var t = 0
                 while (true) {
                     particles.forEach { it.update() }
                     delay(16)
-                    tick = t
                     t++
+                    if (lastWidth != MinecraftClient.getInstance().window.width || lastHeight != MinecraftClient.getInstance().window.height) {
+                        particles = List(80) {
+                            Particle()
+                        }
+                        lastWidth = MinecraftClient.getInstance().window.width
+                        lastHeight = MinecraftClient.getInstance().window.height
+                    }
                 }
             }
             SuperSoft.javaClass.getResourceAsStream("/assets/supersoft/background.jpg")?.let {
@@ -98,7 +92,6 @@ class TitleScreen : ComposeScreen(Text.of("Title Screen")) {
                     modifier = Modifier.fillMaxSize(),
                     contentDescription = null)
             }
-
 
             Canvas(modifier = Modifier.fillMaxSize()) {
                 particles.forEach { p ->

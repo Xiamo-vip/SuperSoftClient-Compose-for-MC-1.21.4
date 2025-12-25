@@ -1,49 +1,41 @@
 package com.xiamo.module.modules.render
 
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.SizeTransform
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
-import coil3.compose.AsyncImage
 import com.xiamo.module.ComposeModule
+import com.xiamo.module.Module
 import com.xiamo.notification.NotificationManager
-import com.xiamo.utils.misc.MediaPlayer
 import net.minecraft.client.MinecraftClient
 
 object DynamicIsland : ComposeModule("DynamicIsland","灵动岛") {
 
     var defaultTitle = mutableStateOf("SuperSoft 🙂 FPS：{fps}")
-    var color = mutableStateOf(Color.Black)
+    var color = mutableStateOf(Color.Black.copy(0.85f))
 
+
+    var permanentList = mutableStateMapOf<Module,@Composable () -> Unit>()
 
     init {
         this.enabled = true
@@ -75,18 +67,21 @@ object DynamicIsland : ComposeModule("DynamicIsland","灵动岛") {
                 .padding(vertical = 5.dp), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally
 
             ) {
-                if (NotificationManager.notifies.count() == 0) {
-                    if (MediaPlayer.isPlaying.value){
-                        item {
-                            Row(horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
-                                Text(defaultTitle.value.replace("{fps}",fps.toString()) +"  —正在播放：" + MediaPlayer.song.value?.name, color = Color.White, fontSize = 6.sp)
-                                AsyncImage(MediaPlayer.song.value?.image, modifier = Modifier.padding(start = 5.dp).size(12.dp).clip(RoundedCornerShape(1.dp)), contentDescription = null)
-                            }
-                        }
 
-                    }else {
-                        item {
+                if (NotificationManager.notifies.count() == 0) {
+                    item {
+                        Row {
                             Text(defaultTitle.value.replace("{fps}",fps.toString()), color = Color.White, fontSize = 6.sp)
+                            permanentList.onEachIndexed { index, pair ->
+                                if (index != permanentList.count()-1) {
+                                    Text(" ・ ", color = Color.White, fontSize = 6.sp)
+                                    pair.value.invoke()
+                                    Text(" ・ ", color = Color.White, fontSize = 6.sp)
+                                } else {
+                                    Text(" ・ ", color = Color.White, fontSize = 6.sp)
+                                    pair.value.invoke()
+                                }
+                            }
                         }
                     }
                 }else {
@@ -99,4 +94,13 @@ object DynamicIsland : ComposeModule("DynamicIsland","灵动岛") {
 
         super.renderCompose()
     }
+
+    fun registerPermanent(module: Module,composeContext:@Composable () -> Unit) {
+        permanentList[module] = composeContext
+    }
+    fun unregisterPermanent(module: Module) {
+        permanentList.remove(module)
+    }
+
+
 }

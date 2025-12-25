@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.xiamo.gui.hud.HudComponent
 import com.xiamo.module.ComposeModule
 import com.xiamo.setting.ColorSetting
 import net.minecraft.client.MinecraftClient
@@ -91,9 +92,9 @@ object KeyboradHud : ComposeModule("KeyboardHud", "键盘可视化") {
         val fontSizeSp = fontSize.value.sp
 
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.TopStart) {
-            com.xiamo.gui.hud.HudComponent(
+            HudComponent(
                 componentId = "keyboard",
-                moduleName = "KeyboradHud",
+                moduleName = "KeyboardHud",
                 defaultX = offsetX.value,
                 defaultY = offsetY.value,
                 defaultScale = 1f

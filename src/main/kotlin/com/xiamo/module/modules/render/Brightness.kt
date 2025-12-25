@@ -1,13 +1,14 @@
 package com.xiamo.module.modules.render
 
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.material.Text
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.sp
 import com.xiamo.module.Category
 import com.xiamo.module.Module
 import net.minecraft.client.MinecraftClient
 import net.minecraft.entity.effect.StatusEffectInstance
 import net.minecraft.entity.effect.StatusEffects
-import net.minecraft.registry.Registry
-import net.minecraft.registry.entry.RegistryEntry
+
 
 object Brightness  : Module("Brightness","夜视", Category.Render) {
     override fun onTick() {
@@ -20,7 +21,15 @@ object Brightness  : Module("Brightness","夜视", Category.Render) {
         super.onTick()
     }
 
+    override fun enable() {
+        DynamicIsland.registerPermanent(this){
+            Text("夜视：开",fontSize = 6.sp, color = Color.White)
+        }
+        super.enable()
+    }
+
     override fun disable() {
+        DynamicIsland.unregisterPermanent(this)
         MinecraftClient.getInstance().player?.removeStatusEffect(StatusEffects.NIGHT_VISION)
         super.disable()
     }
