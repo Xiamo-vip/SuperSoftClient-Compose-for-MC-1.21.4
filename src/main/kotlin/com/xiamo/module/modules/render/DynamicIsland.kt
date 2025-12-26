@@ -70,7 +70,7 @@ object DynamicIsland : ComposeModule("DynamicIsland","灵动岛") {
 
                 if (NotificationManager.notifies.count() == 0) {
                     item {
-                        Row {
+                        Row(horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
                             Text(defaultTitle.value.replace("{fps}",fps.toString()), color = Color.White, fontSize = 6.sp)
                             permanentList.onEachIndexed { index, pair ->
                                 if (index != permanentList.count()-1) {
