@@ -98,7 +98,6 @@ class ClickGuiScreen(val parentScreen: Screen? = null) : ComposeScreen(Text.of("
         }
 
         Box(modifier = Modifier.fillMaxSize()) {
-            // Semi-transparent background overlay
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -106,7 +105,7 @@ class ClickGuiScreen(val parentScreen: Screen? = null) : ComposeScreen(Text.of("
                     .background(Color.Black)
             )
 
-            // Main content area - render windows directly without clipping container
+
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -196,7 +195,7 @@ class ClickGuiScreen(val parentScreen: Screen? = null) : ComposeScreen(Text.of("
             return true
         }
 
-        // Check if the pressed key is the ClickGui module's hotkey
+
         val clickGuiModule = ModuleManager.modules.find { it.name == "ClickGui" }
         if (clickGuiModule != null && keyCode == clickGuiModule.key) {
             close()
