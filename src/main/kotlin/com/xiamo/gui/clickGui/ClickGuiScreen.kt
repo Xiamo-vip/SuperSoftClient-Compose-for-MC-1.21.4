@@ -1,7 +1,7 @@
 package com.xiamo.gui.clickGui
 
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.animateSizeAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -12,9 +12,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.dp
@@ -38,13 +35,25 @@ class ClickGuiScreen(val parentScreen: Screen? = null) : ComposeScreen(Text.of("
 
     @Composable
     override fun renderCompose() {
+        var expanded by remember { mutableStateOf(false) }
+
         LaunchedEffect(Unit) {
+            expanded = true
             isVisible = true
         }
 
-        val scale by animateSizeAsState(
-            if (isVisible) Size(1f, 1f) else Size(0f, 0f),
-            tween(durationMillis = 300),
+        LaunchedEffect(isVisible) {
+            if (!isVisible) {
+                expanded = false
+            }
+        }
+
+        val progress by animateFloatAsState(
+            targetValue = if (expanded && isVisible) 1f else 0f,
+            animationSpec = spring(
+                dampingRatio = 0.8f,
+                stiffness = 300f
+            ),
             finishedListener = {
                 if (!isVisible) {
                     MinecraftClient.getInstance().setScreen(parentScreen)
@@ -52,16 +61,15 @@ class ClickGuiScreen(val parentScreen: Screen? = null) : ComposeScreen(Text.of("
             }
         )
 
-        val blurAlpha by animateFloatAsState(
-            targetValue = if (isVisible) 1f else 0f,
-            animationSpec = tween(durationMillis = 400)
+        val contentAlpha by animateFloatAsState(
+            targetValue = if (expanded && isVisible) 1f else 0f,
+            animationSpec = tween(200)
         )
 
         if (categories.isEmpty()) {
             val client = MinecraftClient.getInstance()
             val window = client.window
             val factor = window.scaleFactor.toFloat()
-
 
             val screenWidth = window.scaledWidth
             val windowWidth = 100
@@ -90,29 +98,24 @@ class ClickGuiScreen(val parentScreen: Screen? = null) : ComposeScreen(Text.of("
         }
 
         Box(modifier = Modifier.fillMaxSize()) {
+            // Semi-transparent background overlay
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .alpha(blurAlpha * 0.6f)
-                    .background(
-                        Brush.radialGradient(
-                            colors = listOf(Color(0, 0, 0, 180), Color(0, 0, 0, 220))
-                        )
-                    )
+                    .graphicsLayer(alpha = progress * 0.5f)
+                    .background(Color.Black)
             )
 
+            // Main content area - render windows directly without clipping container
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .alpha(animateFloatAsState(if (isVisible) 1f else 0f).value)
-                    .safeContentPadding()
-                    .graphicsLayer {
-                        scaleX = scale.width
-                        scaleY = scale.height
-                    }
+                    .graphicsLayer(alpha = contentAlpha)
             ) {
                 if (!HudEditorManager.isEditMode) {
-                    categories.forEach { it.renderCompose() }
+                    categories.forEach { window ->
+                        window.renderCompose()
+                    }
                 }
 
                 Button(
@@ -161,7 +164,6 @@ class ClickGuiScreen(val parentScreen: Screen? = null) : ComposeScreen(Text.of("
             HudEditorManager.selectComponent(null)
         }
 
-
         val hoveredWindow = categories.reversed().find { it.isHover }
         if (hoveredWindow != null) {
             hoveredWindow.onClicked(mouseX.toInt(), mouseY.toInt())
@@ -193,6 +195,14 @@ class ClickGuiScreen(val parentScreen: Screen? = null) : ComposeScreen(Text.of("
             categories.firstOrNull()?.onKeyPressed(keyCode)
             return true
         }
+
+        // Check if the pressed key is the ClickGui module's hotkey
+        val clickGuiModule = ModuleManager.modules.find { it.name == "ClickGui" }
+        if (clickGuiModule != null && keyCode == clickGuiModule.key) {
+            close()
+            return true
+        }
+
         if (keyCode == 256) {
             if (HudEditorManager.isEditMode) {
                 HudEditorManager.toggleEditMode()
