@@ -94,6 +94,13 @@ object  EvenManager {
         }
     }
 
+    @EventTarget
+    fun renderEntityEvent(blockRendferEvent: BlockRenderEvent){
+        ModuleManager.modules.filter { it.enabled }.forEach {
+            it.renderBlock(blockRendferEvent.blockEntity,blockRendferEvent.matrix,blockRendferEvent.vertexConsumers)
+        }
+    }
+
 
 
 

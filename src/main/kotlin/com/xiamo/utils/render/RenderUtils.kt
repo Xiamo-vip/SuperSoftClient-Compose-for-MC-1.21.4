@@ -111,7 +111,7 @@ object RenderUtils {
             org.lwjgl.opengl.GL11.GL_ZERO
         )
         RenderSystem.disableDepthTest()
-        RenderSystem.depthMask(false)
+        RenderSystem.depthMask(true)
         RenderSystem.disableCull()
         RenderSystem.setShader(ShaderProgramKeys.POSITION_COLOR)
 
@@ -130,6 +130,7 @@ object RenderUtils {
         BufferRenderer.drawWithGlobalProgram(buffer.end())
 
         RenderSystem.enableCull()
+        RenderSystem.depthFunc(org.lwjgl.opengl.GL11.GL_LEQUAL)
         RenderSystem.depthMask(true)
         RenderSystem.enableDepthTest()
         RenderSystem.disableBlend()

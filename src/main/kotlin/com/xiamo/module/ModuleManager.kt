@@ -8,6 +8,7 @@ import com.xiamo.module.modules.movement.Speed
 import com.xiamo.module.modules.movement.Sprint
 import com.xiamo.module.modules.player.ChestStealer
 import com.xiamo.module.modules.render.Brightness
+import com.xiamo.module.modules.render.ChestESP
 import com.xiamo.module.modules.render.ClickGui
 import com.xiamo.module.modules.render.DynamicIsland
 import com.xiamo.module.modules.render.ESP
@@ -45,6 +46,7 @@ object ModuleManager {
         modules.add(InventoryMove)
         modules.add(DynamicIsland)
         modules.add(SmoothCamera)
+        modules.add(ChestESP)
 
 
 

@@ -24,7 +24,10 @@ import com.xiamo.utils.config.ConfigManager
 import com.xiamo.notification.NotificationManager
 import com.xiamo.notification.Notify
 import com.xiamo.setting.*
+import net.minecraft.block.entity.BlockEntity
 import net.minecraft.client.gui.DrawContext
+import net.minecraft.client.render.VertexConsumer
+import net.minecraft.client.render.VertexConsumerProvider
 import net.minecraft.client.util.math.MatrixStack
 import net.minecraft.entity.Entity
 import java.util.concurrent.CopyOnWriteArrayList
@@ -140,5 +143,10 @@ open class Module(val name: String, val description: String, val category: Categ
     open fun onSettingChanged(setting: AbstractSetting<*>) {
         ConfigManager.saveModule(this)
         ConfigManager.load()
+    }
+
+
+    open fun renderBlock(blockEntity: BlockEntity,matrix : MatrixStack,vertexConsumer: VertexConsumerProvider) {
+
     }
 }

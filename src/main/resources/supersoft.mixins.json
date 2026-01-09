@@ -4,7 +4,8 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "MixinGameHud",
-    "MixinScreen"
+    "MixinScreen",
+    "MixinBlockRendererDispatcher"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -1,6 +1,8 @@
 package com.xiamo.event
 
 import androidx.compose.ui.graphics.Matrix
+import net.minecraft.block.BlockState
+import net.minecraft.block.entity.BlockEntity
 import net.minecraft.client.gui.DrawContext
 import net.minecraft.client.gui.screen.Overlay
 import net.minecraft.client.gui.screen.Screen
@@ -36,7 +38,7 @@ class PlayerMovementTickPacketSendPre(x: Double,y: Double,z: Double,isOnGround :
 }
 
 class EntityRenderEvent(val entity: Entity,val matrix: MatrixStack,val tickDelta : Float): Event(){}
-
+class BlockRenderEvent(val blockEntity: BlockEntity,val matrix: MatrixStack,val vertexConsumers : VertexConsumerProvider): Event(){}
 
 
 
