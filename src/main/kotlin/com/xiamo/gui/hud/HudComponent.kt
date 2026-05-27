@@ -39,8 +39,8 @@ fun HudComponent(
     content: @Composable () -> Unit
 ) {
     val mc = MinecraftClient.getInstance()
-    val windowWidth = mc.window.width.toFloat()
-    val windowHeight = mc.window.height.toFloat()
+    val windowWidth = mc.window.framebufferWidth.toFloat()
+    val windowHeight = mc.window.framebufferHeight.toFloat()
 
     val isEditMode = HudEditorManager.isEditMode
 

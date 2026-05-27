@@ -100,7 +100,9 @@ object NameTags : ComposeModule("NameTags", "NameTags") {
         }
 
         val fov = Math.toRadians(mc.gameRenderer.getFov(camera, tickDelta, true).toDouble()).toFloat()
-        val aspectRatio = window.width.toFloat() / window.height.toFloat()
+        val screenWidth = window.framebufferWidth.toFloat()
+        val screenHeight = window.framebufferHeight.toFloat()
+        val aspectRatio = screenWidth / screenHeight
         val halfHeight = tan(fov / 2.0f)
         val halfWidth = halfHeight * aspectRatio
         val ndcX = delta.x / -delta.z / halfWidth
@@ -108,8 +110,8 @@ object NameTags : ComposeModule("NameTags", "NameTags") {
         if (ndcX < -1f || ndcX > 1f || ndcY < -1f || ndcY > 1f) {
             return null
         }
-        val screenX = (ndcX + 1.0f) / 2.0f * window.width
-        val screenY = (ndcY + 1.0f) / 2.0f * window.height
+        val screenX = (ndcX + 1.0f) / 2.0f * screenWidth
+        val screenY = (ndcY + 1.0f) / 2.0f * screenHeight
 
         return Offset(screenX, screenY)
     }

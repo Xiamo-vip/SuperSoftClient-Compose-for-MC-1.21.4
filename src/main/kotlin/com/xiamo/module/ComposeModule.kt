@@ -79,9 +79,13 @@ open class ComposeModule(name : String, description : String) : Module(name,desc
         composeScene?.size = IntSize(width, height)
     }
 
+    private fun sceneWidth() = MinecraftClient.getInstance().window.framebufferWidth
+
+    private fun sceneHeight() = MinecraftClient.getInstance().window.framebufferHeight
+
     private fun buildCompose(){
-        val frameWidth = MinecraftClient.getInstance().window.framebufferWidth
-        val frameHeight = MinecraftClient.getInstance().window.framebufferHeight
+        val frameWidth = sceneWidth()
+        val frameHeight = sceneHeight()
         val mc = MinecraftClient.getInstance()
         if (skiaContext != null && surface != null &&
             surface!!.width == frameWidth && surface!!.height == frameHeight) {
@@ -105,17 +109,17 @@ open class ComposeModule(name : String, description : String) : Module(name,desc
     override fun onRender(drawContext: DrawContext) {
         val mc = MinecraftClient.getInstance()
 
-        if (composeScene == null) initCompose(mc.window.width,mc.window.height)
+        if (composeScene == null) initCompose(sceneWidth(), sceneHeight())
 
         if (lastScaleFactor != mc.window.scaleFactor.toFloat()){
             closeSkiaResources()
-            initCompose(mc.window.width,mc.window.height)
+            initCompose(sceneWidth(), sceneHeight())
             lastScaleFactor = mc.window.scaleFactor.toFloat()
         }
 
-        if (composeScene?.size?.width != mc.window.width || composeScene?.size?.height != mc.window.height) {
+        if (composeScene?.size?.width != sceneWidth() || composeScene?.size?.height != sceneHeight()) {
             closeSkiaResources()
-            initCompose(mc.window.width,mc.window.height)
+            initCompose(sceneWidth(), sceneHeight())
         }
         currentScale = mc.window.scaleFactor.toFloat()
         buildCompose()

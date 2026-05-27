@@ -71,19 +71,19 @@ class TitleScreen : ComposeScreen(Text.of("Title Screen")) {
                 isVisiable = true
             }
             LaunchedEffect(Unit) {
-                lastWidth = MinecraftClient.getInstance().window.width
-                lastHeight = MinecraftClient.getInstance().window.height
+                lastWidth = MinecraftClient.getInstance().window.framebufferWidth
+                lastHeight = MinecraftClient.getInstance().window.framebufferHeight
                 var t = 0
                 while (true) {
                     particles.forEach { it.update() }
                     delay(16)
                     t++
-                    if (lastWidth != MinecraftClient.getInstance().window.width || lastHeight != MinecraftClient.getInstance().window.height) {
+                    if (lastWidth != MinecraftClient.getInstance().window.framebufferWidth || lastHeight != MinecraftClient.getInstance().window.framebufferHeight) {
                         particles = List(80) {
                             Particle()
                         }
-                        lastWidth = MinecraftClient.getInstance().window.width
-                        lastHeight = MinecraftClient.getInstance().window.height
+                        lastWidth = MinecraftClient.getInstance().window.framebufferWidth
+                        lastHeight = MinecraftClient.getInstance().window.framebufferHeight
                     }
                 }
             }
@@ -135,14 +135,14 @@ class TitleScreen : ComposeScreen(Text.of("Title Screen")) {
 
 
 class Particle() {
-    var x by mutableStateOf(Random.nextFloat() * MinecraftClient.getInstance().window.width)
-    var y by mutableStateOf(Random.nextFloat() * MinecraftClient.getInstance().window.height)
+    var x by mutableStateOf(Random.nextFloat() * MinecraftClient.getInstance().window.framebufferWidth)
+    var y by mutableStateOf(Random.nextFloat() * MinecraftClient.getInstance().window.framebufferHeight)
     var speed = 0.5
     var vX = (Random.nextFloat() * 2 - 1) * speed.toFloat()
     var vY = (Random.nextFloat() * 2 - 1) * speed.toFloat()
     fun update() {
-        if (x >= MinecraftClient.getInstance().window.width.toFloat() || x <= 0){vX *= -1 }
-        if (y >= MinecraftClient.getInstance().window.height.toFloat() || y <=0 ){vY *= -1 }
+        if (x >= MinecraftClient.getInstance().window.framebufferWidth.toFloat() || x <= 0){vX *= -1 }
+        if (y >= MinecraftClient.getInstance().window.framebufferHeight.toFloat() || y <=0 ){vY *= -1 }
         x += vX
         y += vY
     }
@@ -167,4 +167,3 @@ fun MenuButton(
         }
     }
 }
-

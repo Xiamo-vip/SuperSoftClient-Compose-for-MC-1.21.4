@@ -81,9 +81,13 @@ open class ComposeScreen(val text: Text) : Screen(text) {
         composeScene?.size = IntSize(width, height)
     }
 
+    private fun sceneWidth() = mc.window.framebufferWidth
+
+    private fun sceneHeight() = mc.window.framebufferHeight
+
     private fun buildCompose(){
-        val frameWidth = mc.window.framebufferWidth
-        val frameHeight = mc.window.framebufferHeight
+        val frameWidth = sceneWidth()
+        val frameHeight = sceneHeight()
 
         if (skiaContext != null && surface != null &&
             surface!!.width == frameWidth && surface!!.height == frameHeight) {
@@ -117,17 +121,17 @@ open class ComposeScreen(val text: Text) : Screen(text) {
     ) {
         val mc = MinecraftClient.getInstance()
 
-        if (composeScene == null) initCompose(mc.window.width,mc.window.height)
+        if (composeScene == null) initCompose(sceneWidth(), sceneHeight())
 
         if (lastScaleFactor != mc.window.scaleFactor){
             closeSkiaResources()
-            initCompose(mc.window.width,mc.window.height)
+            initCompose(sceneWidth(), sceneHeight())
             lastScaleFactor = mc.window.scaleFactor
         }
 
-        if (composeScene?.size?.width != mc.window.width || composeScene?.size?.height != mc.window.height) {
+        if (composeScene?.size?.width != sceneWidth() || composeScene?.size?.height != sceneHeight()) {
             closeSkiaResources()
-            initCompose(mc.window.width,mc.window.height)
+            initCompose(sceneWidth(), sceneHeight())
         }
         currentScale = mc.window.scaleFactor
 
@@ -159,7 +163,7 @@ open class ComposeScreen(val text: Text) : Screen(text) {
     override fun resize(client: MinecraftClient?, width: Int, height: Int) {
         closeSkiaResources()
         if (client != null) {
-            initCompose(client.window.width, client.window.height)
+            initCompose(client.window.framebufferWidth, client.window.framebufferHeight)
         }
         super.resize(client, width, height)
     }

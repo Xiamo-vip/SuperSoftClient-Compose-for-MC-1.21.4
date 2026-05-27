@@ -140,8 +140,8 @@ object Hud : ComposeModule("Hud", "界面") {
 
     @Composable
     override fun renderCompose() {
-        val screenWidth = MinecraftClient.getInstance().window.width.toFloat()
-        val screenHeight = MinecraftClient.getInstance().window.height.toFloat()
+        val screenWidth = MinecraftClient.getInstance().window.framebufferWidth.toFloat()
+        val screenHeight = MinecraftClient.getInstance().window.framebufferHeight.toFloat()
         val infiniteTransition = rememberInfiniteTransition(label = "rainbow")
         val textMeasurer = rememberTextMeasurer()
         val hueOffset by infiniteTransition.animateFloat(
